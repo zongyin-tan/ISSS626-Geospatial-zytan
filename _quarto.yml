@@ -5,8 +5,10 @@ website:
   title: "ISSS626-Geospatial-zytan"
   navbar:
     left:
-      - text: "Hands-on Exercise 1"
-        href: "Hands-on Ex/Hands-on_Ex-01/Hands-on_Ex01.html"
+      - text: "Hands-on Exercise"
+        menu:
+        - text: "Hands-on Exercise 1"
+          href: "Hands-on Ex/Hands-on_Ex-01/Hands-on_Ex01.html"
     right:
       - href: index.qmd
         text: Home
