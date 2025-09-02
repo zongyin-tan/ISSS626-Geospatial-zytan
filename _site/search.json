@@ -1,12 +1,13 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "ISSS626-Geospatial-zytan",
+    "objectID": "Hands-on_Ex/Hands-on_Ex02a/Hands-on_Ex02a.html",
+    "href": "Hands-on_Ex/Hands-on_Ex02a/Hands-on_Ex02a.html",
+    "title": "Hands-on_Ex02a",
     "section": "",
-    "text": "Welcome to ISSS626 Geospatial Analytics and Applications. In this website, you will find my coursework prepared for this course."
+    "text": "Spatial Point Pattern Analysis (SPPA) is the evaluation of the pattern or distribution of a set of points on a surface. The points may represent:\n\nEvents such as crimes, traffic accidents, or disease onsets, or\nBusiness services (e.g., coffee shops and fast-food outlets) or facilities such as childcare centres and eldercare centres.\n\nFirst-order Spatial Point Pattern Analysis (1st-SPPA) studies how point intensity (density) varies across space. This will help answer questions like:\n\nAre there more points in some areas than others?\nWhere are the hotspots or clusters?"
   },
   {
+<<<<<<< HEAD
     "objectID": "Hands-on_Ex/Hands-on_Ex01b/Hands-on_Ex01b.html",
     "href": "Hands-on_Ex/Hands-on_Ex01b/Hands-on_Ex01b.html",
     "title": "Thematic Mapping and GeoVisualisation with R",
@@ -154,6 +155,8 @@
     "text": "Spatial Point Pattern Analysis (SPPA) is the evaluation of the pattern or distribution of a set of points on a surface. The points may represent:\n\nEvents such as crimes, traffic accidents, or disease onsets, or\nBusiness services (e.g., coffee shops and fast-food outlets) or facilities such as childcare centres and eldercare centres.\n\nFirst-order Spatial Point Pattern Analysis (1st-SPPA) studies how point intensity (density) varies across space. This will help answer questions like:\n\nAre there more points in some areas than others?\nWhere are the hotspots or clusters?"
   },
   {
+=======
+>>>>>>> 81336bfc1c4053bed01e1b7bc57e3309e34bd5e4
     "objectID": "Hands-on_Ex/Hands-on_Ex02a/Hands-on_Ex02a.html#mapping-the-geospatial-data-sets",
     "href": "Hands-on_Ex/Hands-on_Ex02a/Hands-on_Ex02a.html#mapping-the-geospatial-data-sets",
     "title": "Hands-on_Ex02a",
