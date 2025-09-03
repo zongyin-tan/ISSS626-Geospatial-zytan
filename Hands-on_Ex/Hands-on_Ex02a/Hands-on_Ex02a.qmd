@@ -339,6 +339,32 @@ plot(kde_childcareSG_km)
 
 Beside *bw.diggle()*, there are three other **spatstat** functions can be used to determine the bandwidth, they are: *bw.CvL()*, *bw.scott()*, and *bw.ppl()*.
 
+::: panel-tabset
+## bw.CvL
+
+```{r}
+bw.CvL(childcareSG_ppp_km)
+```
+
+## bw.scott
+
+```{r}
+bw.scott(childcareSG_ppp_km)
+```
+
+## bw.ppl
+
+```{r}
+bw.ppl(childcareSG_ppp_km)
+```
+
+## bw.diggle
+
+```{r}
+bw.diggle(childcareSG_ppp_km)
+```
+:::
+
 ```{r}
 bw.CvL(childcareSG_ppp_km)
 ```
