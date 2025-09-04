@@ -1,0 +1,402 @@
+---
+title: "2nd Order Spatial Point Patterns Analysis Methods"
+format: html
+---
+
+# **Overview**
+
+Unlike **First-order spatial point pattern**, which looks at how point density varies across space, **Second-order spatial point pattern analysis** examines the relationships between points themselves. It asks whether points cluster together, spread out evenly or occur randomly.
+
+This will help us answer questions like:
+
+-   Are the childcare centres in Singapore randomly distributed throughout the country?
+
+-   If the answer is not, then the next logical question is where are the locations with higher concentration of childcare centres?
+
+# Datasets
+
+The following datasets will be used:
+
+-   **Child Care Services** kml data file ([Child Care Services](https://data.gov.sg/datasets?query=child+care+services&page=1&resultId=d_2bbcc5e944a9f2d7d40c78097ab652fc))
+
+-   **Master Plan 2019 Subzone Boundary (No Sea)** kml data file ([Master plan 2019](https://data.gov.sg/datasets?query=Master+Plan+2019+Subzone+Boundary+(No+Sea)&page=1&resultId=d_8594ae9ff96d0c708bc2af633048edfb))
+
+# Installing and Loading the R packages
+
+The code chunk below uses *p_load()* of pacman package to check if the following packages are installed in the computer. If they are, then they will be launched into R.
+
+-   sf - Provides the core tools for handling spatial data
+
+-   spatstat - A package used for spatial point pattern analysis
+
+-   tmap - A package used for producing maps for visualisation
+
+-   rvest - A web scraping package to download and parse data from websites
+
+```{r}
+pacman::p_load(sf, spatstat, tmap, tidyverse, rvest)
+```
+
+# **Data Import and Preparation**
+
+Use the code chunk below to import Master Plan 2019 Subzone (No Sea) data set into R environment. It imports the masterplan data, removes the Z (elevation) and M (measure) diemension, and transforms into SVY21.
+
+```{r}
+mpsz_sf <- st_read("data/MasterPlan2019SubzoneBoundaryNoSeaKML.kml") %>% 
+  st_zm(drop = TRUE, what = "ZM") %>% st_transform(crs = 3414)
+```
+
+## Preparation of Master Plan 2019 Subzone (No Sea) dataset
+
+The dataset is prepared for the end result of an owin file called *sg_owin*.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+extract_kml_field <- function(html_text, field_name) {
+  if (is.na(html_text) || html_text == "") return(NA_character_)
+  
+  page <- read_html(html_text)
+  rows <- page %>% html_elements("tr")
+  
+  value <- rows %>%
+    keep(~ html_text2(html_element(.x, "th")) == field_name) %>%
+    html_element("td") %>%
+    html_text2()
+  
+  if (length(value) == 0) NA_character_ else value
+}
+
+mpsz_sf <- mpsz_sf %>%
+  mutate(
+    REGION_N = map_chr(Description, extract_kml_field, "REGION_N"),
+    PLN_AREA_N = map_chr(Description, extract_kml_field, "PLN_AREA_N"),
+    SUBZONE_N = map_chr(Description, extract_kml_field, "SUBZONE_N"),
+    SUBZONE_C = map_chr(Description, extract_kml_field, "SUBZONE_C")
+  ) %>%
+  select(-Name, -Description) %>%
+  relocate(geometry, .after = last_col())
+
+mpsz_cl <- mpsz_sf %>%
+  filter(SUBZONE_N != "SOUTHERN GROUP",
+         PLN_AREA_N != "WESTERN ISLANDS",
+         PLN_AREA_N != "NORTH-EASTERN ISLANDS")
+
+sg_owin <- as.owin(mpsz_cl)
+```
+
+## Preparation of childcare centre dataset
+
+The dataset is prepared for the end result of a ppp file. sg_owin file is combined into the data points of *childcare_ppp* file.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+childcare_sf <- st_read("data/ChildCareServices.kml") %>% 
+  st_zm(drop = TRUE, what = "ZM") %>%
+  st_transform(crs = 3414)
+
+childcare_ppp <- as.ppp(childcare_sf)
+
+childcareSG_ppp = childcare_ppp[sg_owin]
+```
+
+# Data Wrangling
+
+The following locations are extracted from *mpsz_cl* and created to owin format for merge together with the ppp files.
+
+-   Punggol
+
+-   Tampines
+
+-   Choa Chu Kang
+
+-   Jurong West
+
+```{r}
+pg <- mpsz_cl %>%
+  filter(PLN_AREA_N == "PUNGGOL")
+tm <- mpsz_cl %>%
+  filter(PLN_AREA_N == "TAMPINES")
+ck <- mpsz_cl %>%
+  filter(PLN_AREA_N == "CHOA CHU KANG")
+jw <- mpsz_cl %>%
+  filter(PLN_AREA_N == "JURONG WEST")
+
+pg_owin = as.owin(pg)
+tm_owin = as.owin(tm)
+ck_owin = as.owin(ck)
+jw_owin = as.owin(jw)
+
+childcare_pg_ppp = childcare_ppp[pg_owin]
+childcare_tm_ppp = childcare_ppp[tm_owin]
+childcare_ck_ppp = childcare_ppp[ck_owin]
+childcare_jw_ppp = childcare_ppp[jw_owin]
+
+childcare_pg_ppp.km = rescale.ppp(childcare_pg_ppp, 1000, "km")
+childcare_tm_ppp.km = rescale.ppp(childcare_tm_ppp, 1000, "km")
+childcare_ck_ppp.km = rescale.ppp(childcare_ck_ppp, 1000, "km")
+childcare_jw_ppp.km = rescale.ppp(childcare_jw_ppp, 1000, "km")
+
+par(mfrow=c(2,2), mar=c(2,2,2,2))
+plot(unmark(childcare_pg_ppp.km), 
+  main="Punggol", cex=0.5)
+plot(unmark(childcare_tm_ppp.km), 
+  main="Tampines", cex=0.5)
+plot(unmark(childcare_ck_ppp.km), 
+  main="Choa Chu Kang", cex=0.5)
+plot(unmark(childcare_jw_ppp.km), 
+  main="Jurong West", cex=0.5)
+```
+
+The points are plotted as shown above.
+
+# **Second-order Spatial Point Patterns Analysis**
+
+## **Analysing Spatial Point Process Using G-Function**
+
+The G-function measures the distances from **each point in a dataset** to its nearest neighboring point and summarizes these distances across the study area. In simple terms, it shows how close points are to each other and whether they tend to cluster or spread out.
+
+We will be using *Gest()* for the computing of G-function and *envelope()* for the monte carlo simulation. These 2 functions are of the **spatstat** package.
+
+### Choa Chu Kang planning area
+
+#### Computing G-function estimation
+
+```{r}
+set.seed(1234)
+```
+
+The code chunk below is used to compute G-function using *Gest()* of **spatat** package.
+
+```{r}
+G_CK = Gest(childcare_ck_ppp, correction = "border")
+plot(G_CK, xlim=c(0,500))
+```
+
+#### Performing Complete Spatial Randomness Test
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+-   Ho = The distribution of childcare services at Choa Chu Kang are randomly distributed.
+
+-   H1= The distribution of childcare services at Choa Chu Kang are not randomly distributed.
+
+-   The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001.
+
+```{r}
+G_CK.csr <- envelope(childcare_ck_ppp, Gest, nsim = 999)
+```
+
+After the simulation is complete, we will then plot the graph.
+
+```{r}
+plot(G_CK.csr)
+```
+
+### **Tampines planning area**
+
+#### Computing G-function estimation
+
+```{r}
+G_tm = Gest(childcare_tm_ppp, correction = "best")
+plot(G_tm)
+```
+
+#### Performing Complete Spatial Randomness Test
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+-   Ho = The distribution of childcare services at Tampines are randomly distributed.
+
+-   H1= The distribution of childcare services at Tampines are not randomly distributed.
+
+-   The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+```{r}
+G_tm.csr <- envelope(childcare_tm_ppp, Gest, correction = "all", nsim = 999)
+```
+
+Again, we will plot the graph.
+
+```{r}
+plot(G_tm.csr)
+```
+
+## **Analysing Spatial Point Process Using F-Function**
+
+The F-function measures the distances from **randomly chosen locations** in a study area to the nearest event (point) in the dataset and summarizes these distances across the entire area. In simple terms, it shows how close random locations are to the nearest points and whether events are widely spread out or leave large empty spaces.
+
+We will be using *Fest()* for the computing of F-function and *envelope()* for the monte carlo simulation. These 2 functions are of the **spatstat** package.
+
+### **Choa Chu Kang planning area**
+
+#### Computing F-function estimation
+
+The code chunk below is used to compute F-function using *Fest()* of **spatat** package.
+
+```{r}
+F_CK = Fest(childcare_ck_ppp)
+plot(F_CK)
+```
+
+#### **Performing Complete Spatial Randomness Test**
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+-   Ho = The distribution of childcare services at Choa Chu Kang are randomly distributed.
+
+-   H1= The distribution of childcare services at Choa Chu Kang are not randomly distributed.
+
+-   The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001.
+
+```{r}
+F_CK.csr <- envelope(childcare_ck_ppp, Fest, nsim = 999)
+plot(F_CK.csr)
+```
+
+### **Tampines planning area**
+
+#### Computing F-function estimation
+
+```{r}
+F_tm = Fest(childcare_tm_ppp, correction = "best")
+plot(F_tm)
+```
+
+#### Performing Complete Spatial Randomness Test
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+-   Ho = The distribution of childcare services at Tampines are randomly distributed.
+
+-   H1= The distribution of childcare services at Tampines are not randomly distributed.
+
+-   The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+```{r}
+F_tm.csr <- envelope(childcare_tm_ppp, Fest, correction = "all", nsim = 999)
+plot(F_tm.csr)
+```
+
+## **Analysing Spatial Point Process Using K-Function**
+
+The K-function evaluates the spatial clustering or dispersion of points by comparing the **observed number of neighboring points** within a given distance to what would be expected under CSR. In simple terms, it shows whether points are more clustered or more evenly spread than random at different spatial scales.
+
+We will be using *Kest()* for the computing of K-function and *envelope()* for the monte carlo simulation. These 2 functions are of the **spatstat** package.
+
+### **Choa Chu Kang planning area**
+
+#### Computing K-function estimate
+
+The code chunk below is used to compute F-function using *Kest()* of **spatat** package.
+
+```{r}
+K_ck = Kest(childcare_ck_ppp, correction = "Ripley")
+plot(K_ck, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
+```
+
+#### Performing Complete Spatial Randomness Test
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+-   Ho = The distribution of childcare services at Choa Chu Kang are randomly distributed.
+
+-   H1= The distribution of childcare services at Choa Chu Kang are not randomly distributed.
+
+-   The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001.
+
+```{r}
+K_ck.csr <- envelope(childcare_ck_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+plot(K_ck.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+### **Tampines planning area**
+
+#### Computing K-function estimation
+
+```{r}
+K_tm = Kest(childcare_tm_ppp, correction = "Ripley")
+plot(K_tm, . -r ~ r, 
+     ylab= "K(d)-r", xlab = "d(m)", 
+     xlim=c(0,1000))
+```
+
+#### Performing Complete Spatial Randomness Test
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+-   Ho = The distribution of childcare services at Tampines are randomly distributed.
+
+-   H1= The distribution of childcare services at Tampines are not randomly distributed.
+
+-   The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001.
+
+```{r}
+K_tm.csr <- envelope(childcare_tm_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+plot(K_tm.csr, . - r ~ r, 
+     xlab="d", ylab="K(d)-r", xlim=c(0,500))
+```
+
+## **Analysing Spatial Point Process Using L-Function**
+
+The L-function is a transformation of the K-function that makes it easier to interpret by stabilizing its variance. Instead of looking directly at the cumulative number of points within a distance, the L-function rescales the values so that under complete spatial randomness (CSR), the function should follow a straight 45-degree line. In simple terms, it helps detect clustering or dispersion more clearly and is easier to interpret visually than the K-function.
+
+We will be using *Lest()* for the computing of L-function and *envelope()* for the monte carlo simulation. These 2 functions are of the **spatstat** package.
+
+### **Choa Chu Kang planning area**
+
+#### Computing L Function estimation
+
+```{r}
+L_ck = Lest(childcare_ck_ppp, correction = "Ripley")
+plot(L_ck, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)")
+```
+
+#### Performing Complete Spatial Randomness Test
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+-   Ho = The distribution of childcare services at Choa Chu Kang are randomly distributed.
+
+-   H1= The distribution of childcare services at Choa Chu Kang are not randomly distributed.
+
+-   The null hypothesis will be rejected if p-value if smaller than alpha value of 0.001.
+
+```{r}
+L_ck.csr <- envelope(childcare_ck_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
+plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+### **Tampines planning area**
+
+#### Computing L-function estimate
+
+```{r}
+L_tm = Lest(childcare_tm_ppp, correction = "Ripley")
+plot(L_tm, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)", 
+     xlim=c(0,1000))
+```
+
+#### Performing Complete Spatial Randomness Test
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+-   Ho = The distribution of childcare services at Tampines are randomly distributed.
+
+-   H1= The distribution of childcare services at Tampines are not randomly distributed.
+
+-   The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001.
+
+```{r}
+L_tm.csr <- envelope(childcare_tm_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
+plot(L_tm.csr, . - r ~ r, 
+     xlab="d", ylab="L(d)-r", xlim=c(0,500))
+
+```
+
+# **Reference**
+
+-   [Kam, T. S. Geospatial Data Science with R. R for Geospatial Data Science and Analytics](https://r4gdsa.netlify.app/chap05)
