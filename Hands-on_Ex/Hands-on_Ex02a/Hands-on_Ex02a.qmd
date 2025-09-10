@@ -365,22 +365,6 @@ bw.diggle(childcareSG_ppp_km)
 ```
 :::
 
-```{r}
-bw.CvL(childcareSG_ppp_km)
-```
-
-```{r}
-bw.scott(childcareSG_ppp_km)
-```
-
-```{r}
-bw.ppl(childcareSG_ppp_km)
-```
-
-```{r}
-bw.diggle(childcareSG_ppp_km)
-```
-
 Baddeley et. (2016) suggested the use of the *bw.ppl()* algorithm because past experience shown that it tends to produce the more appropriate values when the pattern consists predominantly of tight clusters. But they also insist that if the purpose of once study is to detect a single tight cluster in the midst of random noise then the *bw.diggle()* method seems to work best.
 
 The code chunk beow will be used to compare the output of using *bw.diggle* and *bw.ppl* methods.
