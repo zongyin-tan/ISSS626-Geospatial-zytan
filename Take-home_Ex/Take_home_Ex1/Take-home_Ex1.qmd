@@ -1,0 +1,126 @@
+---
+title: "Take-home Exercise 1: Geospatial Analytics for Public Good"
+author: "Tan Zong Yin Shawn"
+date: "September 11, 2025"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+# **Overview**
+
+The locations of businesses and firms are central to urban development, influencing economic growth, job creation, and the availability of resources and services for residents and other businesses. Strategic locations provide competitive advantages, access to talent and infrastructure, and impact brand image and market positioning, while also shaping the city’s overall character and functionality by fostering specialized districts and facilitating efficient supply chains and employee commutes.
+
+Studying the spatio-temporal patterns of businesses and firms is crucial for urban development because it reveals how economic activity and urban forms evolve, enabling better urban planning, promoting sustainability, identifying urban inefficiencies, and enhancing quality of life. By understanding where and when businesses locate and operate, urban planners can design cities more effectively, anticipate growth, ensure resource efficiency, and tailor infrastructure to support economic vitality and community well-being.
+
+# **Datasets**
+
+# **Installing and Loading the R packages**
+
+The following code chunk will be used to
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse, httr, dplyr, lubridate)
+```
+
+# Importing and Preparing the Data
+
+## **Importing the Data**
+
+The following code chunk is used to import all the ACRA **.csv** files from the folder and combine them into a single dataset. This allows us to manage and analyze the data more efficiently within R. At the end of the code we will use *glimpse()* to have an overview of the data fields and their data type to confirm if they are in their correct format.
+
+```{r}
+path <- "data"
+
+files <- list.files(path = path, 
+                    pattern = "ACRA Information on Corporate Entities.*\\.csv", 
+                    full.names = TRUE)
+
+acra_data <- files %>% 
+  map_dfr(~ read_csv(.x, show_col_types = FALSE))
+
+glimpse(acra_data)
+```
+
+## **Data Preparation**
+
+### Dropping irrelevant data fields
+
+To streamline the dataset for analysis, we will select only the relevant fields identified through the *glimpse()* function shown above. This step ensures that we focus on the essential variables needed for our study, resulting in a cleaner and more manageable dataset.
+
+For geocoding, location information can be derived either from the combination of **block** and **street_name** fields, or directly from the **postal_code**. To ensure data quality, we use the following code chunk to check for any missing values in these fields and list them.
+
+```{r}
+acra_data %>%
+  filter(is.na(block) | block == "" |
+         is.na(street_name) | street_name == "" |
+         is.na(postal_code) | postal_code == "") %>%
+  select(uen, entity_name, block, street_name, postal_code) %>%
+  glimpse()
+
+```
+
+Since there are missing block numbers within the dataset, we will proceed to use the postal codes for geocoding. The following code chunk will be used to select the data fields we want for our dataset.
+
+```{r}
+acra_selected <- acra_data %>%
+  select(
+    uen,
+    entity_name,
+    entity_type_description,
+    entity_status_description,
+    registration_incorporation_date,
+    primary_ssic_code,
+    address_type,
+    postal_code
+  )
+
+glimpse(acra_selected)
+
+```
+
+### Dropping Irrelevant Records
+
+For this exercise, we will be looking at the following trades using the SICC classification:
+
+-   47- Retail Trade
+
+-   56 - Food and Beverage Service Activities
+
+-   86 - Health Services
+
+The following code chunk will be used to filter and leave the above mentioned types of businesses within our dataset.
+
+```{r}
+acra_ssic <- acra_selected %>%
+  filter(str_starts(primary_ssic_code, "47") |
+         str_starts(primary_ssic_code, "56") |
+         str_starts(primary_ssic_code, "86"))
+
+glimpse(acra_ssic)
+```
+
+We want to only have the records of business entities registered between 1st January 2024 to 30th June 2026. Before we filter, it is good practice to check the data type. The following code chunk will be used to check the data type.
+
+```{r}
+class(acra_ssic$registration_incorporation_date)
+```
+
+After confirming the data type, we can proceed to filter the records.
+
+```{r}
+acra_filtered <- acra_ssic %>%
+  filter(registration_incorporation_date >= as.Date("2024-01-01") &
+         registration_incorporation_date <= as.Date("2025-06-30"))
+
+glimpse(acra_filtered)
+```
+
+# References
+
+-   [Kam, T. S. Geospatial Data Science with R. R for Geospatial Data Science and Analytics](https://isss626-ay2025-26aug.netlify.app/take-home_ex01)
+-   [SSIC: Singapore Standard Industrial Classification](https://classification.codes/classifications/industry/ssic-singapore#version_1_singapore-standard-industrial-classification-ssic-2020)
+-   [Sleek.com - SSIC (Primary and Secondary)](https://sleek.com/sg/resources/ssic-codes-guide/)
