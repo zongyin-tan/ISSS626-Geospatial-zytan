@@ -1,0 +1,1044 @@
+---
+title: "Take-home Exercise 1: Geospatial Analytics for Public Good"
+author: "Tan Zong Yin Shawn"
+date: "September 11, 2025"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+# **Overview**
+
+The locations of businesses and firms are central to urban development, influencing economic growth, job creation, and the availability of resources and services for residents and other businesses. Strategic locations provide competitive advantages, access to talent and infrastructure, and impact brand image and market positioning, while also shaping the city’s overall character and functionality by fostering specialized districts and facilitating efficient supply chains and employee commutes.
+
+Studying the spatio-temporal patterns of businesses and firms is crucial for urban development because it reveals how economic activity and urban forms evolve, enabling better urban planning, promoting sustainability, identifying urban inefficiencies, and enhancing quality of life. By understanding where and when businesses locate and operate, urban planners can design cities more effectively, anticipate growth, ensure resource efficiency, and tailor infrastructure to support economic vitality and community well-being.
+
+# **Datasets**
+
+# **Installing and Loading the R packages**
+
+The following code chunk will be used to
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse, httr, dplyr, lubridate, rvest, spatstat, terra, sparr, stpp)
+```
+
+# Importing and Preparing the Data
+
+## Importing the Study Area
+
+We will use Master Plan 2019 Subzone (No Sea) for our study area. The following code chunk will import the masterplan data, removes the Z (elevation) and M (measure) diemension, and transforms into SVY21.
+
+```{r}
+#|eval: false
+mpsz_sf <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML.kml") %>% 
+  st_zm(drop = TRUE, what = "ZM") %>% st_transform(crs = 3414)
+```
+
+The following code chunk will be use to filter the unwanted areas as we will be focused on the main island of Singapore.
+
+```{r}
+#|eval: false
+extract_kml_field <- function(html_text, field_name) {
+  if (is.na(html_text) || html_text == "") return(NA_character_)
+  
+  page <- read_html(html_text)
+  rows <- page %>% html_elements("tr")
+  
+  value <- rows %>%
+    keep(~ html_text2(html_element(.x, "th")) == field_name) %>%
+    html_element("td") %>%
+    html_text2()
+  
+  if (length(value) == 0) NA_character_ else value
+}
+
+mpsz_sf <- mpsz_sf %>%
+  mutate(
+    REGION_N = map_chr(Description, extract_kml_field, "REGION_N"),
+    PLN_AREA_N = map_chr(Description, extract_kml_field, "PLN_AREA_N"),
+    SUBZONE_N = map_chr(Description, extract_kml_field, "SUBZONE_N"),
+    SUBZONE_C = map_chr(Description, extract_kml_field, "SUBZONE_C")
+  ) %>%
+  select(-Name, -Description) %>%
+  relocate(geometry, .after = last_col())
+
+mpsz_cl <- mpsz_sf %>%
+  filter(SUBZONE_N != "SOUTHERN GROUP",
+         PLN_AREA_N != "WESTERN ISLANDS",
+         PLN_AREA_N != "NORTH-EASTERN ISLANDS")
+```
+
+```{r}
+#|eval: false
+#|echo: false
+write_rds(mpsz_cl, 
+          "data/rds/mpsz_cl.rds")
+```
+
+```{r}
+#|echo: false
+mpsz_cl <- read_rds("data/rds/mpsz_cl.rds")
+```
+
+The code chunk below will be used to create an interactive map for future reference to the different locations on the map.
+
+```{r}
+mpsz_ok <- mpsz_cl |> st_make_valid()
+
+pa_sf <- mpsz_ok |>
+  group_by(PLN_AREA_N, REGION_N) |>
+  summarise(.groups = "drop")
+
+st_agr(pa_sf) <- "constant"
+
+tmap_mode("view")
+
+tm_basemap("CartoDB.Positron") +
+  tm_shape(pa_sf, name = "Planning Areas") +
+    tm_polygons(
+      fill       = "grey90",      # single color (OK in v4)
+      fill_alpha = 0.15,          # v4: use fill_alpha (not alpha)
+      border.col = "grey50",
+      lwd        = 0.6,
+      id         = "PLN_AREA_N",  # tooltip on hover (still supported)
+      popup.vars = c("Planning Area" = "PLN_AREA_N",
+                     "Region"        = "REGION_N")
+    ) +
+  tm_shape(mpsz_ok, name = "Subzones") +
+    tm_borders(col = "grey80", lwd = 0.3) +
+  tm_view(set_zoom_limits = c(9, 14)) +     # v4: set_zoom_limits
+  tm_title("Study Area (MP2019): Planning Areas")  # v4: tm_title()
+
+```
+
+## **Importing the ACRA Data**
+
+The following code chunk is used to import all the ACRA **.csv** files from the folder and combine them into a single dataset. This allows us to manage and analyze the data more efficiently within R.
+
+```{r}
+path <- "data"
+
+files <- list.files(path = path, 
+                    pattern = "ACRA Information on Corporate Entities.*\\.csv", 
+                    full.names = TRUE)
+
+acra_data <- files %>% 
+  map_dfr(~ read_csv(.x, show_col_types = FALSE))
+```
+
+```{r}
+#|eval: false
+#|echo: false
+write_rds(acra_data,
+          "data/rds/acra_data.rds")
+```
+
+We will use *glimpse()* to have an overview of the data fields and their data type to confirm if they are in their correct format.
+
+```{r}
+#|eval: false
+#|echo: false
+acra_data <- read_rds("data/rds/acra_data.rds")
+```
+
+```{r}
+glimpse(acra_data)
+```
+
+## **Data Preparation**
+
+### Selection of Business Types
+
+We will be looking at the following business types for our analysis
+
+1.  56112 - Cafes
+
+2.  86201 - Clinics and other general medical services (Western)
+
+3.  47102 - Mini-marts, convenience stores and provision shops
+
+The code chunks below will be used to filter out the business type we want to keep and also use *glimpse()* for us to take a look at the extracted information.
+
+::: panel-tabset
+#### Cafes
+
+```{r}
+biz_56112 <- acra_data%>%
+  select(1:24) %>%
+  filter(primary_ssic_code == 56112) %>%
+  rename(date = registration_incorporation_date) %>%
+  mutate(date = as.Date(date),
+         YEAR = year(date),
+         MONTH_NUM = month(date),
+         MONTH_ABBR = month(date,
+                            label = TRUE,
+                            abbr = TRUE)) %>%
+  mutate(
+    postal_code = str_pad(postal_code,
+    width = 6, side = "left", pad = "0")) %>%
+            filter(date >= as.Date("2024-01-01") & date <= as.Date("2025-06-30"))
+glimpse(biz_56112)
+```
+
+#### Clinics
+
+```{r}
+biz_86201 <- acra_data%>%
+  select(1:24) %>%
+  filter(primary_ssic_code == 86201) %>%
+  rename(date = registration_incorporation_date) %>%
+  mutate(date = as.Date(date),
+         YEAR = year(date),
+         MONTH_NUM = month(date),
+         MONTH_ABBR = month(date,
+                            label = TRUE,
+                            abbr = TRUE)) %>%
+  mutate(
+    postal_code = str_pad(postal_code,
+    width = 6, side = "left", pad = "0")) %>%
+            filter(date >= as.Date("2024-01-01") & date <= as.Date("2025-06-30"))
+glimpse(biz_86201)
+```
+
+#### Minimarts
+
+```{r}
+biz_47102 <- acra_data%>%
+  select(1:24) %>%
+  filter(primary_ssic_code == 47102) %>%
+  rename(date = registration_incorporation_date) %>%
+  mutate(date = as.Date(date),
+         YEAR = year(date),
+         MONTH_NUM = month(date),
+         MONTH_ABBR = month(date,
+                            label = TRUE,
+                            abbr = TRUE)) %>%
+  mutate(
+    postal_code = str_pad(postal_code,
+    width = 6, side = "left", pad = "0")) %>%
+            filter(date >= as.Date("2024-01-01") & date <= as.Date("2025-06-30"))
+glimpse(biz_47102)
+```
+:::
+
+### Geocoding
+
+For geocoding, location information can be derived directly from the **postal_code**. The following code chunks will be used to extract the unique postal code from the postal_code field and append the location information into the individual objects and finally convert them into a dataframe.
+
+::: panel-tabset
+#### Cafes
+
+```{r}
+biz_56112_postcode <- unique(biz_56112$postal_code)
+
+url <- "https://onemap.gov.sg/api/common/elastic/search"
+
+found <- data.frame()
+not_found <- data.frame(postcode = character())
+
+for (pc in biz_56112_postcode) {
+  query <- list(
+    searchVal = pc,
+    returnGeom = "Y",
+    getAddrDetails = "Y",
+    pageNum = "1"
+  )
+  
+  res <- GET(url, query = query)
+  json <- content(res)
+  
+  if (json$found != 0) {
+    df <- as.data.frame(json$results, stringAsFactors = FALSE)
+    df$input_postcode <- pc
+    found <- bind_rows(found, df)
+  } else{
+    not_found <- bind_rows(not_found, data.frame(postcode = pc))
+  }
+}
+```
+
+```{r}
+biz_56112 = biz_56112 %>%
+  left_join(found,
+            by = c('postal_code' = 'POSTAL'))
+```
+
+```{r}
+biz_56112_sf <- st_as_sf(biz_56112,
+                         coords = c("X", "Y"),
+                         crs=3414)
+glimpse(biz_56112_sf)
+```
+
+#### Clinics
+
+```{r}
+biz_86201_postcode <- unique(biz_86201$postal_code)
+
+url <- "https://onemap.gov.sg/api/common/elastic/search"
+
+found <- data.frame()
+not_found <- data.frame(postcode = character())
+
+for (pc in biz_86201_postcode) {
+  query <- list(
+    searchVal = pc,
+    returnGeom = "Y",
+    getAddrDetails = "Y",
+    pageNum = "1"
+  )
+  
+  res <- GET(url, query = query)
+  json <- content(res)
+  
+  if (json$found != 0) {
+    df <- as.data.frame(json$results, stringAsFactors = FALSE)
+    df$input_postcode <- pc
+    found <- bind_rows(found, df)
+  } else{
+    not_found <- bind_rows(not_found, data.frame(postcode = pc))
+  }
+}
+```
+
+```{r}
+biz_86201 = biz_86201 %>%
+  left_join(found,
+            by = c('postal_code' = 'POSTAL'))
+```
+
+```{r}
+biz_86201_sf <- st_as_sf(biz_86201,
+                         coords = c("X", "Y"),
+                         crs=3414)
+glimpse(biz_86201_sf)
+```
+
+#### Minimarts
+
+```{r}
+biz_47102_postcode <- unique(biz_47102$postal_code)
+
+url <- "https://onemap.gov.sg/api/common/elastic/search"
+
+found <- data.frame()
+not_found <- data.frame(postcode = character())
+
+for (pc in biz_47102_postcode) {
+  query <- list(
+    searchVal = pc,
+    returnGeom = "Y",
+    getAddrDetails = "Y",
+    pageNum = "1"
+  )
+  
+  res <- GET(url, query = query)
+  json <- content(res)
+  
+  if (json$found != 0) {
+    df <- as.data.frame(json$results, stringAsFactors = FALSE)
+    df$input_postcode <- pc
+    found <- bind_rows(found, df)
+  } else{
+    not_found <- bind_rows(not_found, data.frame(postcode = pc))
+  }
+}
+```
+
+```{r}
+biz_47102 = biz_47102 %>%
+  left_join(found,
+            by = c('postal_code' = 'POSTAL'))
+```
+
+```{r}
+biz_47102_sf <- st_as_sf(biz_47102,
+                         coords = c("X", "Y"),
+                         crs=3414)
+glimpse(biz_47102_sf)
+```
+:::
+
+### Dropping Irrelevant Data Fields
+
+To streamline the dataset for analysis, we will select only the relevant fields identified through the *glimpse()* function shown above. This step ensures that we focus on the essential variables needed for our study, resulting in a cleaner and more manageable dataset.
+
+The following code chunk will be used to select or whitelist the data fields we are keeping.
+
+```{r}
+keep_cols <- c(
+  "uen","entity_name","date",
+  "primary_ssic_code","primary_ssic_description",
+  "block","street_name","building_name","level_no","unit_no","postal_code"
+)
+```
+
+The following code chunks will be used to drop the data fields from each business type object. We use *dplyr::select()* with a whitelist of fields on an sf object because it trims the table to just the variables needed for analysis while automatically preserving the geometry. The sf package implements a *select.sf* method that treats the geometry as “sticky,” so unless you explicitly drop it, your result stays a valid spatial layer.
+
+::: panel-tabset
+#### Cafes
+
+```{r}
+biz_56112_sf <- biz_56112_sf %>%
+  dplyr::select(dplyr::any_of(keep_cols))
+glimpse(biz_56112_sf)
+```
+
+#### Clinics
+
+```{r}
+biz_86201_sf <- biz_86201_sf %>%
+  dplyr::select(dplyr::any_of(keep_cols))
+glimpse(biz_86201_sf)
+```
+
+#### Minimarts
+
+```{r}
+biz_47102_sf <- biz_47102_sf %>%
+  dplyr::select(dplyr::any_of(keep_cols))
+glimpse(biz_47102_sf)
+```
+:::
+
+# Plotting the map
+
+We will first create the Singapore boundary in an object called **sg_owin***.*
+
+```{r}
+sg_owin <- as.owin(mpsz_cl)
+plot(sg_owin)
+```
+
+We will create the objects for each business type for easier referencing using the following code chunk.
+
+```{r}
+border <- st_union(mpsz_cl)  # dissolve to one polygon
+
+cafes   <- biz_56112_sf
+clinics <- biz_86201_sf
+minis   <- biz_47102_sf
+```
+
+With this, we are able to plot the locations of all the businesses that we have selected onto the map
+
+```{r}
+plot(st_geometry(mpsz_cl), col = "grey95", border = "grey70", lwd = .2)
+plot(st_geometry(cafes),   add = TRUE, col = "#E64B35", pch = 16, cex = .6)
+plot(st_geometry(clinics), add = TRUE, col = "#4DBBD5", pch = 16, cex = .6)
+plot(st_geometry(minis),   add = TRUE, col = "#00A087", pch = 16, cex = .6)
+
+```
+
+The following code chunk will plot the locations of each respective business type onto the map.
+
+```{r}
+base_map <- ggplot() +
+  geom_sf(data = mpsz_cl, fill = "grey92", colour = "grey70", linewidth = 0.2) +
+  coord_sf(crs = 3414) +
+  theme_void()
+
+p_cafes   <- base_map + geom_sf(data = cafes,   colour = "#E64B35", size = 1, alpha = 0.9) +
+  ggtitle("Cafes (56112)")
+p_clinics <- base_map + geom_sf(data = clinics, colour = "#4DBBD5", size = 1, alpha = 0.9) +
+  ggtitle("Clinics (86201)")
+p_minis   <- base_map + geom_sf(data = minis,   colour = "#00A087", size = 1, alpha = 0.9) +
+  ggtitle("Mini-marts (47102)")
+
+p_cafes; p_clinics; p_minis
+
+```
+
+# Compute spatial and spatio-temporal KDE
+
+As spatstat’s tools work on **ppp** objects, we will use the following code chunk to convert them to ppp objects.
+
+```{r}
+cafes_ppp <- as.ppp(biz_56112_sf)
+clinics_ppp<- as.ppp(biz_86201_sf)
+minis_ppp<- as.ppp(biz_47102_sf)
+```
+
+With the ***ppp*** objects, we are now able to combine the event points to our owin file.
+
+```{r}
+cafesSG_ppp = cafes_ppp[sg_owin]
+clinicsSG_ppp = clinics_ppp[sg_owin]
+minisSG_ppp = minis_ppp[sg_owin]
+```
+
+## **Spatial Kernel Density Estimation using Automatic Bandwidth Selection**
+
+Kernel Density Estimation (KDE) is a valuable tool for visualising and analyzing first-order spatial point patterns. It is widely considered a method within Exploratory Spatial Data Analysis (ESDA) because it’s used to visualize and understand spatial data patterns by transforms discrete point data.
+
+As the default unit of measurement of SVY21 is in meters, we will have rescale the unit of measurement from meters to kilometers for all ppp files.
+
+```{r}
+cafesSG_ppp_km <- rescale.ppp(
+  cafesSG_ppp, 1000, "km")
+
+clinicsSG_ppp_km <- rescale.ppp(
+  clinicsSG_ppp, 1000, "km")
+
+minisSG_ppp_km <- rescale.ppp(
+  minisSG_ppp, 1000, "km")
+```
+
+We estimate first-order intensity using a **Gaussian kernel** because kernel shape has minor influence relative to bandwidth and Gaussian yields smooth, reproducible maps and its the default for **spatstat**. For bandwidth, we will be using automatic bandwidth selection using both *bw.diggle()* and *bw.ppl()* for comparison.
+
+Alternatives like *bw.CvL()* are valid but can be sensitive in clustered data with duplicate coordinates, while *bw.scott()* is a rule-of-thumb not tailored to spatial point processes.
+
+::: panel-tabset
+### Cafes
+
+```{r}
+kde_cafes_diggle <- density(
+  cafesSG_ppp_km,
+  sigma = bw.diggle,
+  edge = TRUE,
+  kernel = "gaussian")
+
+kde_cafes_ppl <- density(
+  cafesSG_ppp_km,
+  sigma = bw.ppl,
+  edge = TRUE,
+  kernel = "gaussian")
+
+par(mfrow=c(1,2))
+plot(kde_cafes_diggle, main = "bw.diggle")
+plot(kde_cafes_ppl, main = "bw.ppl")
+```
+
+Both selectors pick the same main hotspot in the south–central area (CBD). The **bw.ppl** map is smoother and more consolidated, showing a few broad blobs while **bw.diggle** is finer-grained, with many small, speckled highs.
+
+### Clinics
+
+```{r}
+kde_clinics_diggle <- density(
+  clinicsSG_ppp_km,
+  sigma = bw.diggle,
+  edge = TRUE,
+  kernel = "gaussian")
+
+kde_clinics_ppl <- density(
+  clinicsSG_ppp_km,
+  sigma = bw.ppl,
+  edge = TRUE,
+  kernel = "gaussian")
+
+par(mfrow=c(1,2))
+plot(kde_clinics_diggle, main = "bw.diggle")
+plot(kde_clinics_ppl, main = "bw.ppl")
+```
+
+Both maps highlight a south–central to south-eastern areas as the main hotspot, with weaker scatter across the rest of the island.
+
+### Minimarts
+
+```{r}
+kde_minis_diggle <- density(
+  minisSG_ppp_km,
+  sigma = bw.diggle,
+  edge = TRUE,
+  kernel = "gaussian")
+
+kde_minis_ppl <- density(
+  minisSG_ppp_km,
+  sigma = bw.ppl,
+  edge = TRUE,
+  kernel = "gaussian")
+
+par(mfrow=c(1,2))
+plot(kde_minis_diggle, main = "bw.diggle")
+plot(kde_minis_ppl, main = "bw.ppl")
+```
+
+Both maps show an **island-wide, heartland-driven footprint** with stronger activity around major towns such as Tampines, Bishan, Jurong and Yishun.
+:::
+
+## Plotting the KDE maps
+
+### Conversion to Raster Objects
+
+We will first convert the kernal density objects into **SpatRaster** objects by using *rast()* of **terra** package. We can confirm that the conversion is successful by using the *class()* function.
+
+```{r}
+kde_cafesSG_terra <- rast(kde_cafes_ppl)
+kde_clinicsSG_terra <- rast(kde_clinics_ppl)
+kde_minisSG_terra <- rast(kde_minis_ppl)
+class(kde_cafesSG_terra)
+class(kde_clinicsSG_terra)
+class(kde_minisSG_terra)
+```
+
+### **Assigning projection systems**
+
+Next we will assign the CRS information to our raster objects using the *crs()* function.
+
+```{r}
+kde_cafesSG_terra
+crs(kde_cafesSG_terra) <- "EPSG:3414"
+crs(kde_clinicsSG_terra) <- "EPSG:3414"
+crs(kde_minisSG_terra) <- "EPSG:3414"
+kde_cafesSG_terra
+kde_clinicsSG_terra
+kde_minisSG_terra
+```
+
+We adopt *bw.ppl()* instead of *bw.diggle()* because it offers greater stability and interpretability for our dataset, which often contains clustered or duplicate addresses. While *bw.diggle()* tends to select smaller bandwidths, producing speckled surfaces with sharp micro-peaks, *bw.ppl()* typically yields a slightly larger and smoother bandwidth, resulting in cleaner and communication-ready density surfaces. From a planning perspective, the smoother estimates from *bw.ppl()* align better with analysis conducted at the planning area or subzone level, avoiding the overemphasis on very local spikes that may arise from *bw.diggle()*.
+
+The following code chunks will be used to plot the KDE map of each business type.
+
+::: panel-tabset
+### Cafes
+
+```{r}
+mpsz_km <- mpsz_cl
+st_geometry(mpsz_km) <- st_geometry(mpsz_km) / 1000
+st_crs(mpsz_km) <- NA
+
+# raster clean-up: mask to land + clamp negatives
+cafes_r <- terra::mask(kde_cafesSG_terra, terra::vect(mpsz_km))
+cafes_r <- terra::clamp(cafes_r, lower = 0, values = TRUE)
+names(cafes_r) <- "intensity"
+
+tmap_mode("plot")
+tm_shape(cafes_r) +
+  tm_raster(style = "cont", palette = "magma", title = "per km²") +
+tm_shape(mpsz_km) +
+  tm_borders(col = "grey60", lwd = 0.3) +
+tm_title("Cafes — Kernel Density (bw.ppl)")
+```
+
+### Clinics
+
+```{r}
+clinics_r <- terra::mask(kde_clinicsSG_terra, terra::vect(mpsz_km))
+clinics_r <- terra::clamp(clinics_r, lower = 0, values = TRUE)
+names(clinics_r) <- "intensity"
+
+tmap_mode("plot")
+tm_shape(clinics_r) +
+  tm_raster(style = "cont", palette = "magma", title = "per km²") +
+tm_shape(mpsz_km) +
+  tm_borders(col = "grey60", lwd = 0.3) +
+tm_title("Clinics — Kernel Density (bw.ppl)")
+```
+
+### Minimarts
+
+```{r}
+minis_r <- terra::mask(kde_minisSG_terra, terra::vect(mpsz_km))
+minis_r <- terra::clamp(minis_r, lower = 0, values = TRUE)
+names(minis_r) <- "intensity"
+
+tmap_mode("plot")
+tm_shape(minis_r) +
+  tm_raster(style = "cont", palette = "magma", title = "per km²") +
+tm_shape(mpsz_km) +
+  tm_borders(col = "grey60", lwd = 0.3) +
+tm_title("Mini-marts — Kernel Density (bw.ppl)")
+```
+:::
+
+## Spatio-Temporal KDE
+
+The saptio-temporal KDE will show us the the intensity of new registrations as a function of both location and time. This should reveal the hotspots of business openings in the specific months.
+
+We will first rescale our owin file to kilometers with the following code chunk
+
+```{r}
+sg_owin_km <- rescale.owin(sg_owin, s = 1000, unitname = "km")
+```
+
+## **Visualizing Distribution of Businesses by Month**
+
+The following code chunk will be used to split the distribution points into their months.
+
+```{r}
+# Cafes
+cafes_m <- cafes %>%
+  mutate(
+    DayOfYear = yday(date),
+    Month_num = month(date),
+    Month_fac = factor(format(floor_date(date, "month"), "%Y-%m"))
+  )
+
+# Clinics
+clinics_m <- clinics %>%
+  mutate(
+    DayOfYear = yday(date),
+    Month_num = month(date),
+    Month_fac = factor(format(floor_date(date, "month"), "%Y-%m"))
+  )
+
+# Mini-marts
+minis_m <- minis %>%
+  mutate(
+    DayOfYear = yday(date),
+    Month_num = month(date),
+    Month_fac = factor(format(floor_date(date, "month"), "%Y-%m"))
+  )
+```
+
+We will next plot the distribution points per month for each business type.
+
+::: panel-tabset
+### Cafes
+
+```{r}
+tm_shape(mpsz_cl) + tm_polygons() +
+tm_shape(cafes_m) + tm_dots(size = 0.1) +
+tm_facets(by = "Month_fac", free.coords = FALSE, drop.units = TRUE) +
+tm_title("Cafes — monthly point distribution")
+```
+
+### Clinics
+
+```{r}
+tm_shape(mpsz_cl) + tm_polygons() +
+tm_shape(clinics_m) + tm_dots(size = 0.1) +
+tm_facets(by = "Month_fac", free.coords = FALSE, drop.units = TRUE) +
+tm_title("Clinics — monthly point distribution")
+```
+
+### Minimarts
+
+```{r}
+tm_shape(mpsz_cl) + tm_polygons() +
+tm_shape(minis_m) + tm_dots(size = 0.1) +
+tm_facets(by = "Month_fac", free.coords = FALSE, drop.units = TRUE) +
+tm_title("Mini-marts — monthly point distribution")
+```
+:::
+
+The following code chunk will be used to extract the mark field and geometry field from the input sf data frame since these are the only information needed for *as.ppp()*.
+
+```{r}
+cafes_month <- cafes %>%
+  mutate(YearMonth = floor_date(date, "month"),
+         Month_num = as.integer(factor(format(YearMonth, "%Y-%m")))) %>%
+  select(Month_num)
+
+clinics_month <- clinics %>%
+  mutate(YearMonth = floor_date(date, "month"),
+         Month_num = as.integer(factor(format(YearMonth, "%Y-%m")))) %>%
+  select(Month_num)
+
+minis_month <- minis %>%
+  mutate(YearMonth = floor_date(date, "month"),
+         Month_num = as.integer(factor(format(YearMonth, "%Y-%m")))) %>%
+  select(Month_num)
+```
+
+After we have extracted the data required, we can proceed to create the **ppp** files for each business type.
+
+```{r}
+cafes_month_ppp <- as.ppp(cafes_month)
+clinics_month_ppp <- as.ppp(clinics_month)
+minis_month_ppp   <- as.ppp(minis_month)
+
+```
+
+We will then combine the **ppp** and **owin** objects.
+
+```{r}
+cafes_month_owin <- cafes_month_ppp[sg_owin]
+clinics_month_owin  <- clinics_month_ppp[sg_owin]
+minis_month_owin  <- minis_month_ppp[sg_owin]
+```
+
+## Compute ST-KDE
+
+The following code chunk will then be used to compute the Spatio-Temporal KDE using *spattemp.density()* from **sparr** package.
+
+```{r}
+st_kde_cafes <- spattemp.density(cafes_month_owin)
+st_kde_clinics <- spattemp.density(clinics_month_owin)
+st_kde_minis <- spattemp.density(minis_month_owin)
+summary(st_kde_cafes)
+summary(st_kde_clinics)
+summary(st_kde_minis)
+```
+
+## **Plotting the spatio-temporal KDE object**
+
+We can now plot the ST-KDE objects using the following code chunks.
+
+::: panel-tabset
+## Cafes
+
+```{r}
+caf_month_levels <- levels(factor(format(floor_date(cafes$date, "month"), "%Y-%m")))
+names(caf_month_levels) <- seq_along(caf_month_levels)
+tims <- seq(min(cafes_month$Month_num, na.rm = TRUE),
+            max(cafes_month$Month_num, na.rm = TRUE))
+
+par(mfcol = c(2, 3))
+for (i in tims) {
+  plot(st_kde_cafes, i,
+       override.par = FALSE,
+       fix.range    = TRUE,
+       main = paste("Cafes — KDE at", caf_month_levels[as.character(i)]))
+}
+par(mfcol = c(1, 1))
+```
+
+The KDE maps show persistent but relatively localized intensity hotspots, mostly clustered in the central and southern regions of Singapore. Over the last few outputs, these hotspots remain stable with only mild shifts.
+
+This suggests that cafe openings are spatially stable over time, reflecting commercial clustering in known café districts
+
+## Clinics
+
+```{r}
+cli_month_levels <- levels(factor(format(floor_date(clinics$date, "month"), "%Y-%m")))
+names(cli_month_levels) <- seq_along(cli_month_levels)
+tims <- seq(min(clinics_month$Month_num, na.rm = TRUE),
+            max(clinics_month$Month_num, na.rm = TRUE))
+
+par(mfcol = c(2, 3))
+for (i in tims) {
+  plot(st_kde_clinics, i, override.par = FALSE, fix.range = TRUE,
+       main = paste("Clinics — KDE at", cli_month_levels[as.character(i)]))
+}
+par(mfcol = c(1, 1))
+```
+
+Clinics exhibit more diffused but smaller hotspots, with density values slightly lower compared to cafes. Hotspots appear in residential regions, and while the intensity does not drastically change month to month, the outputs indicate spread rather than strong concentration.
+
+Clinics are service-driven and tend to follow residential demand rather than clustering in just a few commercial hubs. The spatio-temporal KDE reveals that clinics are geographically dispersed but steady, reflecting accessibility needs across neighborhoods.
+
+## Minimarts
+
+```{r}
+min_month_levels <- levels(factor(format(floor_date(minis$date, "month"), "%Y-%m")))
+names(min_month_levels) <- seq_along(min_month_levels)
+tims <- seq(min(minis_month$Month_num, na.rm = TRUE),
+            max(minis_month$Month_num, na.rm = TRUE))
+
+par(mfcol = c(2, 3))
+for (i in tims) {
+  plot(st_kde_minis, i, override.par = FALSE, fix.range = TRUE,
+       main = paste("Mini-marts — KDE at", min_month_levels[as.character(i)]))
+}
+par(mfcol = c(1, 1))
+```
+
+The minimart outputs show much broader and stronger hotspots, particularly in eastern and northern Singapore. Unlike cafes or clinics, the KDE surface grows more intense in certain areas over time, suggesting expansion and reinforcement of hotspots.
+
+Minimarts follow population distribution and residential growth trends, leading to widespread and consistent demand. The STKDE maps suggest minimarts are growing spatially and consolidating in housing estates, with less centralization compared to cafes.
+:::
+
+# **2nd Order Spatial Point Patterns Analysis**
+
+Unlike **First-order spatial point pattern**, which looks at how point density varies across space, **Second-order spatial point pattern analysis** examines the relationships between points themselves. It asks whether points cluster together, spread out evenly or occur randomly.
+
+## **Analysing Spatial Point Process Using L-Function**
+
+The **L-function** will be used as it is often preferred in applied spatial point pattern analysis because it is a variance-stabilized transformation of Ripley’s **K-function**. While the K-function provides insights into clustering or dispersion across scales, it grows quadratically with distance which can make interpretation less intuitive. The L-function linearizes this growth, so under complete spatial randomness (CSR), the expectation is approximately a straight line. This makes deviations easier to interpret with positive values indicate clustering and negative values indicate dispersion.
+
+**G-function (nearest neighbor distribution)** focuses only on the distance to the nearest point, making it useful for micro-scale clustering but limited in capturing patterns at broader distances.
+
+**F-function (empty space distribution)** measures the distribution of distances from arbitrary locations to the nearest point, good for understanding coverage, but not as robust for detecting clustering across scales.
+
+**K-function** provides the same information as L but is harder to interpret due to quadratic growth.
+
+With that, the **L-function** gives the best balance of interpretability, comparability across scales, and robustness, making it the most suitable for the current analysis.
+
+## Computing L Function estimation
+
+The following code chunk will be used to set a seed to ensure reproducibility.
+
+```{r}
+set.seed(1234)
+```
+
+::: panel-tabset
+### Cafes
+
+```{r}
+L_cafes <- Lest(cafesSG_ppp_km, correction = "Ripley")
+plot(L_cafes, . - r ~ r, 
+     ylab = "L(d)-r", 
+     xlab = "d (km)", 
+     main = "L-function for Cafes")
+```
+
+L−r rises quickly to about 1.5 followed by a slightly milder slope to about 3km, then plateaus with only a mild further increase.
+
+Moderate small to mid scale clustering. This is consistent with clusters around CBD and key commercial corridors rather than island-wide aggregation.
+
+### Clinics
+
+```{r}
+L_clinics <- Lest(clinicsSG_ppp_km, correction = "Ripley")
+plot(L_clinics, . - r ~ r, 
+     ylab = "L(d)-r", 
+     xlab = "d (km)", 
+     main = "L-function for Clinics")
+
+```
+
+L−r climbs steadily from the start and keeps rising towards 4km. Climb decreases after the 4km mark.
+
+Strong and persistent clustering across multiple scales. Clinics concentrate in healthcare/service hubs and dense residential belts, and the aggregation remains evident even at larger.
+
+### Minimarts
+
+```{r}
+L_minis <- Lest(minisSG_ppp_km, correction = "Ripley")
+plot(L_minis, . - r ~ r, 
+     ylab = "L(d)-r", 
+     xlab = "d (km)", 
+     main = "L-function for Minimarts")
+```
+
+Sharp rise to about 1km with reduced climb till about 2.5km. Generally plateau from 2.5km onwards.
+
+Pronounced local clustering at neighbourhood scale. consistent with estate-level retail nodes. Past 3 km with the plateau that suggests a fairly even spread of clusters across estates rather than large regional clumps.
+:::
+
+Clinics show the strongest and most persistent clustering, cafes are clustered but moderate with a mid-scale plateau, and mini-marts are highly clustered at short distances but stabilize quickly.
+
+## Performing the Complete Spatial Randomness Test
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+-   Ho = The distribution of the business type distribution points are randomly distributed.
+
+-   H1= The distribution of the business type distribution points are not randomly distributed.
+
+-   The null hypothesis will be rejected if p-value if smaller than alpha value of 0.001.
+
+::: panel-tabset
+## Cafes
+
+```{r}
+L_cafes.csr <- envelope(cafesSG_ppp_km, Lest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_cafes.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+For cafes, the observed L-function (black line) consistently lies well above the CSR envelope (grey band). This indicates a strong clustering pattern across almost all distance scales. In esssence, cafes in Singapore are highly concentrated in certain areas rather than being randomly or evenly spread out. The clustering remains persistent, suggesting that demand-driven agglomeration (cafes near malls, MRT nodes, or central districts) is a key spatial feature.
+
+## Clinics
+
+```{r}
+L_clinics.csr <- envelope(clinicsSG_ppp_km, Lest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_clinics.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+Clinics also show the observed L-function far above the CSR envelope. The upward slope is even steeper than cafes at certain scales, showing very strong clustering effects. This suggests that clinics tend to locate close to one another, possibly due to zoning guidelines (medical clusters) or demand hotspots (near housing estates). The results reinforce that healthcare services are not randomly distributed, but spatially concentrated in identifiable health-service hubs.
+
+## Minimarts
+
+```{r}
+L_minis.csr <- envelope(minisSG_ppp_km, Lest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_minis.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+Minimarts exhibit a different pattern compared to cafes and clinics. The observed L-function still rises above the CSR envelope, confirming clustering, but the magnitude is weaker and levels off after around 2 to 3km. This suggests that minimarts are more localized: they cluster within neighborhoods, but beyond a certain distance, the clustering effect stabilizes. Unlike cafes and clinics that show strong city-wide clustering, minimarts seem to follow a neighborhood serving distribution.
+:::
+
+# **Spatio-temporal Point Patterns Analysis**
+
+In this section, we extend spatial point pattern analysis into the spatio-temporal domain by incorporating both location and time dimensions of business activities. While purely spatial analysis allows us to identify clustering or dispersion of business types across Singapore, spatio-temporal analysis enables us to capture how these patterns evolve over time. This approach helps us answer questions such as:
+
+-   Are certain business types consistently clustered in specific regions, or do their patterns change month by month?
+
+-   Do temporal trends amplify or weaken the spatial clustering observed?
+
+By applying spatio-temporal methods, including kernel density estimation (ST-KDE) and second-order functions, we aim to uncover both the geographical concentration and temporal dynamics of cafes, clinics and minimarts. The goal is to provide deeper insights into whether these businesses exhibit persistent hot spots, seasonal variations, or spatial expansion over time.
+
+## **Preparing spatio-temporal point process object of stpp**
+
+We will use the following code chunk to create the **stpp** object of each business types. The top is a simple function created so there is no need to repeat the codes.
+
+```{r}
+t0 <- as.Date("2024-01-01")
+as_stpp <- function(x_sf, date_col = "date") {
+  coords <- st_coordinates(x_sf) / 1000
+  df <- data.frame(
+    x = coords[, 1],
+    y = coords[, 2],
+    t = as.integer(x_sf[[date_col]] - t0)
+  )
+  stpp::as.3dpoints(df)
+}
+
+cafes_stpp <- as_stpp(biz_56112_sf)
+clinics_stpp <- as_stpp(biz_86201_sf)
+minis_stpp <- as_stpp(biz_47102_sf)
+
+plot(cafes_stpp)
+plot(clinics_stpp)
+plot(minis_stpp)
+```
+
+## **Computing spatio-temporal k-function**
+
+The following code chunk will be used to compute space-time inhomogeneous K-function for each business type.
+
+```{r}
+cafes_stik <- STIKhat(cafes_stpp)
+clinics_stik <- STIKhat(clinics_stpp)
+minis_stik <- STIKhat(minis_stpp)
+```
+
+Next, *plotK()* is used to visualise the output space-time inhomogeneous K-function.
+
+::: panel-tabset
+## Cafes
+
+```{r}
+plotK(cafes_stik)
+```
+
+The STIK plot for cafes shows higher intensity values (up to 70,000) at longer spatial and temporal lags. This suggests that cafes tend to exhibit stronger space–time clustering, meaning their openings or activities are not only concentrated in certain geographic areas but also occur close together in time. In other words, new cafes are more likely to appear near existing ones and within a relatively short time window. This could reflect competitive or lifestyle-driven clustering in high-demand zones
+
+## Clinics
+
+```{r}
+plotK(clinics_stik)
+```
+
+The STIK plot for clinics shows lower intensity compared to cafes (peaking around 50,000), but the contour lines are still tightly packed at larger distances and times. This indicates that while clinics also display spatio-temporal clustering, the effect is less pronounced than for cafes. Clinics may still co-locate in residential areas or medical hubs, but the temporal clustering is less sharp. Clinic openings may be more staggered, possibly due to regulatory or planning constraints.
+
+## Minimarts
+
+```{r}
+plotK(minis_stik)
+```
+
+For minimarts, the STIK plot peaks at around 60,000, showing a clustering effect in both space and time, but not as strong or widespread as cafes. The contours suggest moderate clustering: minimarts tend to appear close to each other and often within similar timeframes, but the intensity is less extreme. This aligns with their role as convenience-focused outlets, filling gaps in residential or neighborhood demand rather than clustering as aggressively as cafes.
+:::
+
+# Conclusion
+
+The spatial and spatio-temporal analyses of cafes, clinics and minimarts provide valuable insights into how these businesses distribute and evolve across Singapore. These findings have direct implications for urban land use planning, resource allocation and long-term management strategies.
+
+Kernel Density Estimation (KDE) and Spatio-Temporal KDE (ST-KDE) revealed clear clustering patterns for all three business types, with cafes showing the most intense concentration, followed by clinics and minimarts. This indicates that certain areas attract repeated investments in similar business types. For planners, such information highlights zones of high commercial competition and consumer demand. Conversely, areas with low densities can be flagged as underserved, providing opportunities for incentivizing new developments to improve service accessibility.
+
+Second-order spatial analysis using the L-function confirmed that all 3 business types exhibit significant clustering beyond what would be expected under complete spatial randomness. This suggests that the presence of one business often encourages the emergence of others nearby. For land use management, this knowledge allows planners to anticipate ripple effects when approving new developments. For example, when placing a new clinic may stimulate further clustering of health-related or support services.
+
+Spatio-temporal K-function analysis added an important dynamic perspective by showing how clustering unfolds across both space and time. Cafes demonstrated the strongest spatio-temporal clustering indicating rapid co-location within short periods while clinics exhibited slower, more regulated growth and lastly, minimarts fell between the two. These patterns suggest different planning needs such as high clustering of cafes may require proactive zoning regulations to prevent oversaturation, while gradual clinic clustering supports strategic allocation of healthcare services to meet long-term demographic trends.
+
+Altogether, the first and second-order spatial and spatio-temporal analyses form a complementary toolkit for urban planners. KDE and ST-KDE highlight where businesses concentrate, L-functions confirm the statistical significance of clustering and STIKhat analysis explains how clustering evolves over time. Combined, these findings empower planners to design more equitable, sustainable, and forward-looking urban environments, ensuring that commercial growth aligns with social needs and infrastructural capacities.
+
+# References
+
+-   [Kam, T. S. Geospatial Data Science with R. R for Geospatial Data Science and Analytics](https://isss626-ay2025-26aug.netlify.app/take-home_ex01)
+-   [SSIC: Singapore Standard Industrial Classification](https://classification.codes/classifications/industry/ssic-singapore#version_1_singapore-standard-industrial-classification-ssic-2020)
+-   [Sleek.com - SSIC (Primary and Secondary)](https://sleek.com/sg/resources/ssic-codes-guide/)

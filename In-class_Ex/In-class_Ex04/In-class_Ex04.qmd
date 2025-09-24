@@ -1,0 +1,76 @@
+---
+title: "In-class_Ex04"
+format: html
+---
+
+```{r}
+pacman::p_load(sf, ggstatsplot, tmap, tidyverse, knitr, GWmodel)
+```
+
+```{r}
+hunan_sf <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan")
+```
+
+```{r}
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+```{r}
+hunan_sf <- left_join(hunan_sf,hunan2012) %>%
+  select(1:3, 7, 15, 16, 31, 32)
+```
+
+```{r}
+hunan_sp <- hunan_sf %>%
+  as_Spatial()
+```
+
+```{r}
+bw_CV <- bw.gwr(GDPPC ~ 1,
+                data = hunan_sp,
+                approach = "CV",
+                adaptive = FALSE,
+                kernel = "bisquare",
+                longlat = T)
+bw_CV
+```
+
+AIC indicates in km
+
+```{r}
+bw_AIC <- bw.gwr(GDPPC ~ 1,
+                data = hunan_sp,
+                approach = "AIC",
+                adaptive = FALSE,
+                kernel = "bisquare",
+                longlat = T)
+bw_AIC
+```
+
+```{r}
+gwstat <- gwss(data = hunan_sp,
+               vars = "GDPPC",
+               bw = bw_AIC,
+               kernel = "bisquare",
+               adaptive = FALSE,
+               longlat = T)
+```
+
+Extracts and converts SDF from gwstat into a data frame.
+
+```{r}
+gwstat_df <- as.data.frame(gwstat$SDF)
+```
+
+Since the columns extracted are in order and aligned with hunan_sf sequence, cbind() can be used to join the data together.
+
+```{r}
+hunan_gstat <- cbind(hunan_sf, gwstat_df)
+```
+
+Visualising geographically weighted summary statistics - Geographically weighted mean
+
+```{r}
+qtm(hunan_gstat, "GDPPC_LM")
+```
