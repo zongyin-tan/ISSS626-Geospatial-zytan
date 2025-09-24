@@ -918,7 +918,14 @@ To confirm the observed spatial patterns above, a hypothesis test will be conduc
 ## Cafes
 
 ```{r}
+#|eval: false
 L_cafes.csr <- envelope(cafesSG_ppp_km, Lest, nsim = 99, rank = 1, glocal=TRUE)
+write_rds(L_cafes.csr, "data/rds/L_cafes_csr.rds")
+```
+
+```{r}
+#|echo: false
+L_cafes.csr <- read_rds("data/rds/L_cafes_csr.rds")
 ```
 
 ```{r}
@@ -930,7 +937,14 @@ For cafes, the observed L-function (black line) consistently lies well above the
 ## Clinics
 
 ```{r}
+#|eval: false
 L_clinics.csr <- envelope(clinicsSG_ppp_km, Lest, nsim = 99, rank = 1, glocal=TRUE)
+write_rds(L_clinics.csr, "data/rds/L_clinics_csr.rds")
+```
+
+```{r}
+#|echo: false
+L_clinics.csr <- read_rds("data/rds/L_clinics_csr.rds")
 ```
 
 ```{r}
@@ -942,7 +956,14 @@ Clinics also show the observed L-function far above the CSR envelope. The upward
 ## Minimarts
 
 ```{r}
+#|eval: false
 L_minis.csr <- envelope(minisSG_ppp_km, Lest, nsim = 99, rank = 1, glocal=TRUE)
+write_rds(L_minis_csr, "data/rds/L_minis_csr.rds")
+```
+
+```{r}
+#|echo: false
+L_minis.csr <- read_rds("data/rds/L_minis_csr.rds")
 ```
 
 ```{r}
