@@ -23,7 +23,7 @@ In this hands-on exercise, we will learn how to compute Local Measures of Spatia
 
 -   to visualise the analysis output by using **tmap** package
 
-\# **The Study Area and Data**
+# **The Study Area and Data**
 
 Two data sets will be used in this hands-on exercise, they are:
 
@@ -39,7 +39,7 @@ Two data sets will be used in this hands-on exercise, they are:
 -   **sf** Provides the core tools for handling spatial data
 -   **tmap** A package used for producing maps for visualisation
 -   **tidyverse** A collection of R packages designed for data science tasks such as data import, cleaning, transformation, and visualisation
--   **spdep** Provides modern tools for analyzing spatial dependence by building on the sf package. It includes functions for creating contiguity and distance-based neighbors, constructing spatial weights, and performing local measures of spatial autocorrelation such as LISA (Local Indicators of Spatial Association).
+-   **sfdep** Provides modern tools for analyzing spatial dependence by building on the sf package. It includes functions for creating contiguity and distance-based neighbors, constructing spatial weights, and performing local measures of spatial autocorrelation such as LISA (Local Indicators of Spatial Association).
 
 ## Code Chunk
 
