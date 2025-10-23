@@ -178,6 +178,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex1/Take-home_Ex1.html">
  <span class="dropdown-text">Take-home Exercise 1</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex2/Take-home_Ex2.html">
+ <span class="dropdown-text">Take-home Exercise 2</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -765,7 +769,8 @@ Projected CRS: SVY21 / Singapore TM
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"
+ℹ toggle with `tmap::ttm()`</code></pre>
 </div>
 </div>
 <p>Next, the code chunks below is used to create an interactive point symbol map.</p>
@@ -793,7 +798,7 @@ Projected CRS: SVY21 / Singapore TM
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 </section>
@@ -1024,23 +1029,23 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_regression</span>(condo.mlr1, <span class="at">intercept =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="mxbywtcftc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#mxbywtcftc table {
+<div id="nvdunmvecq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#nvdunmvecq table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#mxbywtcftc thead, #mxbywtcftc tbody, #mxbywtcftc tfoot, #mxbywtcftc tr, #mxbywtcftc td, #mxbywtcftc th {
+#nvdunmvecq thead, #nvdunmvecq tbody, #nvdunmvecq tfoot, #nvdunmvecq tr, #nvdunmvecq td, #nvdunmvecq th {
   border-style: none;
 }
 
-#mxbywtcftc p {
+#nvdunmvecq p {
   margin: 0;
   padding: 0;
 }
 
-#mxbywtcftc .gt_table {
+#nvdunmvecq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1066,12 +1071,12 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_caption {
+#nvdunmvecq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#mxbywtcftc .gt_title {
+#nvdunmvecq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1083,7 +1088,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-width: 0;
 }
 
-#mxbywtcftc .gt_subtitle {
+#nvdunmvecq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1095,7 +1100,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-top-width: 0;
 }
 
-#mxbywtcftc .gt_heading {
+#nvdunmvecq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1107,13 +1112,13 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_bottom_border {
+#nvdunmvecq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_col_headings {
+#nvdunmvecq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1128,7 +1133,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_col_heading {
+#nvdunmvecq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1148,7 +1153,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   overflow-x: hidden;
 }
 
-#mxbywtcftc .gt_column_spanner_outer {
+#nvdunmvecq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1160,15 +1165,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 4px;
 }
 
-#mxbywtcftc .gt_column_spanner_outer:first-child {
+#nvdunmvecq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mxbywtcftc .gt_column_spanner_outer:last-child {
+#nvdunmvecq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mxbywtcftc .gt_column_spanner {
+#nvdunmvecq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1180,11 +1185,11 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   width: 100%;
 }
 
-#mxbywtcftc .gt_spanner_row {
+#nvdunmvecq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#mxbywtcftc .gt_group_heading {
+#nvdunmvecq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1210,7 +1215,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   text-align: left;
 }
 
-#mxbywtcftc .gt_empty_group_heading {
+#nvdunmvecq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1225,15 +1230,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   vertical-align: middle;
 }
 
-#mxbywtcftc .gt_from_md > :first-child {
+#nvdunmvecq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mxbywtcftc .gt_from_md > :last-child {
+#nvdunmvecq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mxbywtcftc .gt_row {
+#nvdunmvecq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1252,7 +1257,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   overflow-x: hidden;
 }
 
-#mxbywtcftc .gt_stub {
+#nvdunmvecq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1265,7 +1270,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#mxbywtcftc .gt_stub_row_group {
+#nvdunmvecq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1279,15 +1284,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   vertical-align: top;
 }
 
-#mxbywtcftc .gt_row_group_first td {
+#nvdunmvecq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#mxbywtcftc .gt_row_group_first th {
+#nvdunmvecq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#mxbywtcftc .gt_summary_row {
+#nvdunmvecq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1297,16 +1302,16 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#mxbywtcftc .gt_first_summary_row {
+#nvdunmvecq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_first_summary_row.thick {
+#nvdunmvecq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#mxbywtcftc .gt_last_summary_row {
+#nvdunmvecq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1316,7 +1321,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_grand_summary_row {
+#nvdunmvecq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1326,7 +1331,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#mxbywtcftc .gt_first_grand_summary_row {
+#nvdunmvecq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1336,7 +1341,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_last_grand_summary_row_top {
+#nvdunmvecq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1346,11 +1351,11 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_striped {
+#nvdunmvecq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mxbywtcftc .gt_table_body {
+#nvdunmvecq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1359,7 +1364,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_footnotes {
+#nvdunmvecq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1373,7 +1378,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_footnote {
+#nvdunmvecq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1382,7 +1387,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#mxbywtcftc .gt_sourcenotes {
+#nvdunmvecq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1396,7 +1401,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#mxbywtcftc .gt_sourcenote {
+#nvdunmvecq .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1404,72 +1409,72 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#mxbywtcftc .gt_left {
+#nvdunmvecq .gt_left {
   text-align: left;
 }
 
-#mxbywtcftc .gt_center {
+#nvdunmvecq .gt_center {
   text-align: center;
 }
 
-#mxbywtcftc .gt_right {
+#nvdunmvecq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mxbywtcftc .gt_font_normal {
+#nvdunmvecq .gt_font_normal {
   font-weight: normal;
 }
 
-#mxbywtcftc .gt_font_bold {
+#nvdunmvecq .gt_font_bold {
   font-weight: bold;
 }
 
-#mxbywtcftc .gt_font_italic {
+#nvdunmvecq .gt_font_italic {
   font-style: italic;
 }
 
-#mxbywtcftc .gt_super {
+#nvdunmvecq .gt_super {
   font-size: 65%;
 }
 
-#mxbywtcftc .gt_footnote_marks {
+#nvdunmvecq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#mxbywtcftc .gt_asterisk {
+#nvdunmvecq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#mxbywtcftc .gt_indent_1 {
+#nvdunmvecq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#mxbywtcftc .gt_indent_2 {
+#nvdunmvecq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#mxbywtcftc .gt_indent_3 {
+#nvdunmvecq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#mxbywtcftc .gt_indent_4 {
+#nvdunmvecq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#mxbywtcftc .gt_indent_5 {
+#nvdunmvecq .gt_indent_5 {
   text-indent: 25px;
 }
 
-#mxbywtcftc .katex-display {
+#nvdunmvecq .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#mxbywtcftc div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#nvdunmvecq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1595,23 +1600,23 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                AIC, statistic,</span>
 <span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>                p.value, sigma))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="jzmjvfpiyy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jzmjvfpiyy table {
+<div id="lxbfpudgrh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#lxbfpudgrh table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#jzmjvfpiyy thead, #jzmjvfpiyy tbody, #jzmjvfpiyy tfoot, #jzmjvfpiyy tr, #jzmjvfpiyy td, #jzmjvfpiyy th {
+#lxbfpudgrh thead, #lxbfpudgrh tbody, #lxbfpudgrh tfoot, #lxbfpudgrh tr, #lxbfpudgrh td, #lxbfpudgrh th {
   border-style: none;
 }
 
-#jzmjvfpiyy p {
+#lxbfpudgrh p {
   margin: 0;
   padding: 0;
 }
 
-#jzmjvfpiyy .gt_table {
+#lxbfpudgrh .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1637,12 +1642,12 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_caption {
+#lxbfpudgrh .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#jzmjvfpiyy .gt_title {
+#lxbfpudgrh .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1654,7 +1659,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-width: 0;
 }
 
-#jzmjvfpiyy .gt_subtitle {
+#lxbfpudgrh .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1666,7 +1671,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-top-width: 0;
 }
 
-#jzmjvfpiyy .gt_heading {
+#lxbfpudgrh .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1678,13 +1683,13 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_bottom_border {
+#lxbfpudgrh .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_col_headings {
+#lxbfpudgrh .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1699,7 +1704,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_col_heading {
+#lxbfpudgrh .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1719,7 +1724,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   overflow-x: hidden;
 }
 
-#jzmjvfpiyy .gt_column_spanner_outer {
+#lxbfpudgrh .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1731,15 +1736,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 4px;
 }
 
-#jzmjvfpiyy .gt_column_spanner_outer:first-child {
+#lxbfpudgrh .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jzmjvfpiyy .gt_column_spanner_outer:last-child {
+#lxbfpudgrh .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jzmjvfpiyy .gt_column_spanner {
+#lxbfpudgrh .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1751,11 +1756,11 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   width: 100%;
 }
 
-#jzmjvfpiyy .gt_spanner_row {
+#lxbfpudgrh .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#jzmjvfpiyy .gt_group_heading {
+#lxbfpudgrh .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1781,7 +1786,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   text-align: left;
 }
 
-#jzmjvfpiyy .gt_empty_group_heading {
+#lxbfpudgrh .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1796,15 +1801,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   vertical-align: middle;
 }
 
-#jzmjvfpiyy .gt_from_md > :first-child {
+#lxbfpudgrh .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jzmjvfpiyy .gt_from_md > :last-child {
+#lxbfpudgrh .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jzmjvfpiyy .gt_row {
+#lxbfpudgrh .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1823,7 +1828,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   overflow-x: hidden;
 }
 
-#jzmjvfpiyy .gt_stub {
+#lxbfpudgrh .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1836,7 +1841,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#jzmjvfpiyy .gt_stub_row_group {
+#lxbfpudgrh .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1850,15 +1855,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   vertical-align: top;
 }
 
-#jzmjvfpiyy .gt_row_group_first td {
+#lxbfpudgrh .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#jzmjvfpiyy .gt_row_group_first th {
+#lxbfpudgrh .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#jzmjvfpiyy .gt_summary_row {
+#lxbfpudgrh .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1868,16 +1873,16 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#jzmjvfpiyy .gt_first_summary_row {
+#lxbfpudgrh .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_first_summary_row.thick {
+#lxbfpudgrh .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#jzmjvfpiyy .gt_last_summary_row {
+#lxbfpudgrh .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1887,7 +1892,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_grand_summary_row {
+#lxbfpudgrh .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1897,7 +1902,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#jzmjvfpiyy .gt_first_grand_summary_row {
+#lxbfpudgrh .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1907,7 +1912,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_last_grand_summary_row_top {
+#lxbfpudgrh .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1917,11 +1922,11 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_striped {
+#lxbfpudgrh .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jzmjvfpiyy .gt_table_body {
+#lxbfpudgrh .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1930,7 +1935,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_footnotes {
+#lxbfpudgrh .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1944,7 +1949,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_footnote {
+#lxbfpudgrh .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1953,7 +1958,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#jzmjvfpiyy .gt_sourcenotes {
+#lxbfpudgrh .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1967,7 +1972,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#jzmjvfpiyy .gt_sourcenote {
+#lxbfpudgrh .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1975,72 +1980,72 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#jzmjvfpiyy .gt_left {
+#lxbfpudgrh .gt_left {
   text-align: left;
 }
 
-#jzmjvfpiyy .gt_center {
+#lxbfpudgrh .gt_center {
   text-align: center;
 }
 
-#jzmjvfpiyy .gt_right {
+#lxbfpudgrh .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jzmjvfpiyy .gt_font_normal {
+#lxbfpudgrh .gt_font_normal {
   font-weight: normal;
 }
 
-#jzmjvfpiyy .gt_font_bold {
+#lxbfpudgrh .gt_font_bold {
   font-weight: bold;
 }
 
-#jzmjvfpiyy .gt_font_italic {
+#lxbfpudgrh .gt_font_italic {
   font-style: italic;
 }
 
-#jzmjvfpiyy .gt_super {
+#lxbfpudgrh .gt_super {
   font-size: 65%;
 }
 
-#jzmjvfpiyy .gt_footnote_marks {
+#lxbfpudgrh .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#jzmjvfpiyy .gt_asterisk {
+#lxbfpudgrh .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#jzmjvfpiyy .gt_indent_1 {
+#lxbfpudgrh .gt_indent_1 {
   text-indent: 5px;
 }
 
-#jzmjvfpiyy .gt_indent_2 {
+#lxbfpudgrh .gt_indent_2 {
   text-indent: 10px;
 }
 
-#jzmjvfpiyy .gt_indent_3 {
+#lxbfpudgrh .gt_indent_3 {
   text-indent: 15px;
 }
 
-#jzmjvfpiyy .gt_indent_4 {
+#lxbfpudgrh .gt_indent_4 {
   text-indent: 20px;
 }
 
-#jzmjvfpiyy .gt_indent_5 {
+#lxbfpudgrh .gt_indent_5 {
   text-indent: 25px;
 }
 
-#jzmjvfpiyy .katex-display {
+#lxbfpudgrh .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#jzmjvfpiyy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#lxbfpudgrh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2320,7 +2325,7 @@ Note
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 <p>The code chunks below is used to create an interactive point symbol map.</p>
@@ -2355,7 +2360,7 @@ Note
 <div class="cell">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 <p>The figure above reveal that there is sign of spatial autocorrelation.</p>
@@ -2508,7 +2513,7 @@ Note
 <pre><code>   ***********************************************************************
    *                       Package   GWmodel                             *
    ***********************************************************************
-   Program starts at: 2025-10-18 15:53:43.563824 
+   Program starts at: 2025-10-23 21:56:17.308016 
    Call:
    gwr.basic(formula = SELLING_PRICE ~ AREA_SQM + AGE + PROX_CBD + 
     PROX_CHILDCARE + PROX_ELDERLYCARE + PROX_URA_GROWTH_AREA + 
@@ -2616,7 +2621,7 @@ Note
    Adjusted R-square value:  0.8430417 
 
    ***********************************************************************
-   Program stops at: 2025-10-18 15:53:44.538945 </code></pre>
+   Program stops at: 2025-10-23 21:56:17.947109 </code></pre>
 </div>
 </div>
 <p>The report shows that the AICc of the gwr is 42263.61 which is significantly smaller than the globel multiple linear regression model of 42967.1.</p>
@@ -2684,7 +2689,7 @@ Adaptive bandwidth: 30 CV score: 4.422088e+14 </code></pre>
 <pre><code>   ***********************************************************************
    *                       Package   GWmodel                             *
    ***********************************************************************
-   Program starts at: 2025-10-18 15:53:48.549165 
+   Program starts at: 2025-10-23 21:56:23.36556 
    Call:
    gwr.basic(formula = SELLING_PRICE ~ AREA_SQM + AGE + PROX_CBD + 
     PROX_CHILDCARE + PROX_ELDERLYCARE + PROX_URA_GROWTH_AREA + 
@@ -2792,7 +2797,7 @@ Adaptive bandwidth: 30 CV score: 4.422088e+14 </code></pre>
    Adjusted R-square value:  0.8561185 
 
    ***********************************************************************
-   Program stops at: 2025-10-18 15:53:49.154719 </code></pre>
+   Program stops at: 2025-10-23 21:56:24.122645 </code></pre>
 </div>
 </div>
 <p>The report shows that the AICc the adaptive distance gwr is 41982.22 which is even smaller than the AICc of the fixed distance gwr of 42263.61.</p>
@@ -2892,7 +2897,7 @@ $ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POINT (25
 <div class="cell">
 <div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_svy21)<span class="sc">+</span></span>
 <span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">fill_alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
@@ -2916,7 +2921,7 @@ $ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POINT (25
 </div>
 <div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 </section>
@@ -2926,7 +2931,7 @@ $ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POINT (25
 <div class="cell">
 <div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>AREA_SQM_SE <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(mpsz_svy21)<span class="sc">+</span></span>
 <span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
@@ -2963,7 +2968,7 @@ $ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POINT (25
 </div>
 <div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 </section>

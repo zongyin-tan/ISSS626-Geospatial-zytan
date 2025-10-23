@@ -178,6 +178,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex1/Take-home_Ex1.html">
  <span class="dropdown-text">Take-home Exercise 1</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex2/Take-home_Ex2.html">
+ <span class="dropdown-text">Take-home Exercise 2</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -766,7 +770,8 @@ Projected CRS: SVY21 / Singapore TM
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"
+ℹ toggle with `tmap::ttm()`</code></pre>
 </div>
 </div>
 <p>Next, the code chunks below is used to create an interactive point symbol map.</p>
@@ -794,7 +799,7 @@ Projected CRS: SVY21 / Singapore TM
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 </section>
@@ -1025,23 +1030,23 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_regression</span>(condo.mlr1, <span class="at">intercept =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="hgphlazvyq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#hgphlazvyq table {
+<div id="lrldtrtolj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#lrldtrtolj table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#hgphlazvyq thead, #hgphlazvyq tbody, #hgphlazvyq tfoot, #hgphlazvyq tr, #hgphlazvyq td, #hgphlazvyq th {
+#lrldtrtolj thead, #lrldtrtolj tbody, #lrldtrtolj tfoot, #lrldtrtolj tr, #lrldtrtolj td, #lrldtrtolj th {
   border-style: none;
 }
 
-#hgphlazvyq p {
+#lrldtrtolj p {
   margin: 0;
   padding: 0;
 }
 
-#hgphlazvyq .gt_table {
+#lrldtrtolj .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1067,12 +1072,12 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_caption {
+#lrldtrtolj .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#hgphlazvyq .gt_title {
+#lrldtrtolj .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1084,7 +1089,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-width: 0;
 }
 
-#hgphlazvyq .gt_subtitle {
+#lrldtrtolj .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1096,7 +1101,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-top-width: 0;
 }
 
-#hgphlazvyq .gt_heading {
+#lrldtrtolj .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1108,13 +1113,13 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_bottom_border {
+#lrldtrtolj .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_col_headings {
+#lrldtrtolj .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1129,7 +1134,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_col_heading {
+#lrldtrtolj .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1149,7 +1154,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   overflow-x: hidden;
 }
 
-#hgphlazvyq .gt_column_spanner_outer {
+#lrldtrtolj .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1161,15 +1166,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 4px;
 }
 
-#hgphlazvyq .gt_column_spanner_outer:first-child {
+#lrldtrtolj .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#hgphlazvyq .gt_column_spanner_outer:last-child {
+#lrldtrtolj .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#hgphlazvyq .gt_column_spanner {
+#lrldtrtolj .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1181,11 +1186,11 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   width: 100%;
 }
 
-#hgphlazvyq .gt_spanner_row {
+#lrldtrtolj .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#hgphlazvyq .gt_group_heading {
+#lrldtrtolj .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1211,7 +1216,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   text-align: left;
 }
 
-#hgphlazvyq .gt_empty_group_heading {
+#lrldtrtolj .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1226,15 +1231,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   vertical-align: middle;
 }
 
-#hgphlazvyq .gt_from_md > :first-child {
+#lrldtrtolj .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#hgphlazvyq .gt_from_md > :last-child {
+#lrldtrtolj .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#hgphlazvyq .gt_row {
+#lrldtrtolj .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1253,7 +1258,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   overflow-x: hidden;
 }
 
-#hgphlazvyq .gt_stub {
+#lrldtrtolj .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1266,7 +1271,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#hgphlazvyq .gt_stub_row_group {
+#lrldtrtolj .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1280,15 +1285,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   vertical-align: top;
 }
 
-#hgphlazvyq .gt_row_group_first td {
+#lrldtrtolj .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#hgphlazvyq .gt_row_group_first th {
+#lrldtrtolj .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#hgphlazvyq .gt_summary_row {
+#lrldtrtolj .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1298,16 +1303,16 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#hgphlazvyq .gt_first_summary_row {
+#lrldtrtolj .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_first_summary_row.thick {
+#lrldtrtolj .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#hgphlazvyq .gt_last_summary_row {
+#lrldtrtolj .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1317,7 +1322,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_grand_summary_row {
+#lrldtrtolj .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1327,7 +1332,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#hgphlazvyq .gt_first_grand_summary_row {
+#lrldtrtolj .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1337,7 +1342,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_last_grand_summary_row_top {
+#lrldtrtolj .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1347,11 +1352,11 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_striped {
+#lrldtrtolj .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#hgphlazvyq .gt_table_body {
+#lrldtrtolj .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1360,7 +1365,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_footnotes {
+#lrldtrtolj .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1374,7 +1379,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_footnote {
+#lrldtrtolj .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1383,7 +1388,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#hgphlazvyq .gt_sourcenotes {
+#lrldtrtolj .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1397,7 +1402,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#hgphlazvyq .gt_sourcenote {
+#lrldtrtolj .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1405,72 +1410,72 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#hgphlazvyq .gt_left {
+#lrldtrtolj .gt_left {
   text-align: left;
 }
 
-#hgphlazvyq .gt_center {
+#lrldtrtolj .gt_center {
   text-align: center;
 }
 
-#hgphlazvyq .gt_right {
+#lrldtrtolj .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#hgphlazvyq .gt_font_normal {
+#lrldtrtolj .gt_font_normal {
   font-weight: normal;
 }
 
-#hgphlazvyq .gt_font_bold {
+#lrldtrtolj .gt_font_bold {
   font-weight: bold;
 }
 
-#hgphlazvyq .gt_font_italic {
+#lrldtrtolj .gt_font_italic {
   font-style: italic;
 }
 
-#hgphlazvyq .gt_super {
+#lrldtrtolj .gt_super {
   font-size: 65%;
 }
 
-#hgphlazvyq .gt_footnote_marks {
+#lrldtrtolj .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#hgphlazvyq .gt_asterisk {
+#lrldtrtolj .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#hgphlazvyq .gt_indent_1 {
+#lrldtrtolj .gt_indent_1 {
   text-indent: 5px;
 }
 
-#hgphlazvyq .gt_indent_2 {
+#lrldtrtolj .gt_indent_2 {
   text-indent: 10px;
 }
 
-#hgphlazvyq .gt_indent_3 {
+#lrldtrtolj .gt_indent_3 {
   text-indent: 15px;
 }
 
-#hgphlazvyq .gt_indent_4 {
+#lrldtrtolj .gt_indent_4 {
   text-indent: 20px;
 }
 
-#hgphlazvyq .gt_indent_5 {
+#lrldtrtolj .gt_indent_5 {
   text-indent: 25px;
 }
 
-#hgphlazvyq .katex-display {
+#lrldtrtolj .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#hgphlazvyq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#lrldtrtolj div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1596,23 +1601,23 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                AIC, statistic,</span>
 <span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>                p.value, sigma))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="msprmgduiz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#msprmgduiz table {
+<div id="bqzohjjwdc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bqzohjjwdc table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#msprmgduiz thead, #msprmgduiz tbody, #msprmgduiz tfoot, #msprmgduiz tr, #msprmgduiz td, #msprmgduiz th {
+#bqzohjjwdc thead, #bqzohjjwdc tbody, #bqzohjjwdc tfoot, #bqzohjjwdc tr, #bqzohjjwdc td, #bqzohjjwdc th {
   border-style: none;
 }
 
-#msprmgduiz p {
+#bqzohjjwdc p {
   margin: 0;
   padding: 0;
 }
 
-#msprmgduiz .gt_table {
+#bqzohjjwdc .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1638,12 +1643,12 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_caption {
+#bqzohjjwdc .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#msprmgduiz .gt_title {
+#bqzohjjwdc .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1655,7 +1660,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-width: 0;
 }
 
-#msprmgduiz .gt_subtitle {
+#bqzohjjwdc .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1667,7 +1672,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-top-width: 0;
 }
 
-#msprmgduiz .gt_heading {
+#bqzohjjwdc .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1679,13 +1684,13 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_bottom_border {
+#bqzohjjwdc .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_col_headings {
+#bqzohjjwdc .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1700,7 +1705,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_col_heading {
+#bqzohjjwdc .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1720,7 +1725,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   overflow-x: hidden;
 }
 
-#msprmgduiz .gt_column_spanner_outer {
+#bqzohjjwdc .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1732,15 +1737,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 4px;
 }
 
-#msprmgduiz .gt_column_spanner_outer:first-child {
+#bqzohjjwdc .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#msprmgduiz .gt_column_spanner_outer:last-child {
+#bqzohjjwdc .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#msprmgduiz .gt_column_spanner {
+#bqzohjjwdc .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1752,11 +1757,11 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   width: 100%;
 }
 
-#msprmgduiz .gt_spanner_row {
+#bqzohjjwdc .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#msprmgduiz .gt_group_heading {
+#bqzohjjwdc .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1782,7 +1787,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   text-align: left;
 }
 
-#msprmgduiz .gt_empty_group_heading {
+#bqzohjjwdc .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1797,15 +1802,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   vertical-align: middle;
 }
 
-#msprmgduiz .gt_from_md > :first-child {
+#bqzohjjwdc .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#msprmgduiz .gt_from_md > :last-child {
+#bqzohjjwdc .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#msprmgduiz .gt_row {
+#bqzohjjwdc .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1824,7 +1829,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   overflow-x: hidden;
 }
 
-#msprmgduiz .gt_stub {
+#bqzohjjwdc .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1837,7 +1842,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#msprmgduiz .gt_stub_row_group {
+#bqzohjjwdc .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1851,15 +1856,15 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   vertical-align: top;
 }
 
-#msprmgduiz .gt_row_group_first td {
+#bqzohjjwdc .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#msprmgduiz .gt_row_group_first th {
+#bqzohjjwdc .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#msprmgduiz .gt_summary_row {
+#bqzohjjwdc .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1869,16 +1874,16 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#msprmgduiz .gt_first_summary_row {
+#bqzohjjwdc .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_first_summary_row.thick {
+#bqzohjjwdc .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#msprmgduiz .gt_last_summary_row {
+#bqzohjjwdc .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1888,7 +1893,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_grand_summary_row {
+#bqzohjjwdc .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1898,7 +1903,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#msprmgduiz .gt_first_grand_summary_row {
+#bqzohjjwdc .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1908,7 +1913,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_last_grand_summary_row_top {
+#bqzohjjwdc .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1918,11 +1923,11 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_striped {
+#bqzohjjwdc .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#msprmgduiz .gt_table_body {
+#bqzohjjwdc .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1931,7 +1936,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_footnotes {
+#bqzohjjwdc .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1945,7 +1950,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_footnote {
+#bqzohjjwdc .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1954,7 +1959,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#msprmgduiz .gt_sourcenotes {
+#bqzohjjwdc .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1968,7 +1973,7 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#msprmgduiz .gt_sourcenote {
+#bqzohjjwdc .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1976,72 +1981,72 @@ F-statistic: 189.1 on 14 and 1421 DF,  p-value: &lt; 2.2e-16</code></pre>
   padding-right: 5px;
 }
 
-#msprmgduiz .gt_left {
+#bqzohjjwdc .gt_left {
   text-align: left;
 }
 
-#msprmgduiz .gt_center {
+#bqzohjjwdc .gt_center {
   text-align: center;
 }
 
-#msprmgduiz .gt_right {
+#bqzohjjwdc .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#msprmgduiz .gt_font_normal {
+#bqzohjjwdc .gt_font_normal {
   font-weight: normal;
 }
 
-#msprmgduiz .gt_font_bold {
+#bqzohjjwdc .gt_font_bold {
   font-weight: bold;
 }
 
-#msprmgduiz .gt_font_italic {
+#bqzohjjwdc .gt_font_italic {
   font-style: italic;
 }
 
-#msprmgduiz .gt_super {
+#bqzohjjwdc .gt_super {
   font-size: 65%;
 }
 
-#msprmgduiz .gt_footnote_marks {
+#bqzohjjwdc .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#msprmgduiz .gt_asterisk {
+#bqzohjjwdc .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#msprmgduiz .gt_indent_1 {
+#bqzohjjwdc .gt_indent_1 {
   text-indent: 5px;
 }
 
-#msprmgduiz .gt_indent_2 {
+#bqzohjjwdc .gt_indent_2 {
   text-indent: 10px;
 }
 
-#msprmgduiz .gt_indent_3 {
+#bqzohjjwdc .gt_indent_3 {
   text-indent: 15px;
 }
 
-#msprmgduiz .gt_indent_4 {
+#bqzohjjwdc .gt_indent_4 {
   text-indent: 20px;
 }
 
-#msprmgduiz .gt_indent_5 {
+#bqzohjjwdc .gt_indent_5 {
   text-indent: 25px;
 }
 
-#msprmgduiz .katex-display {
+#bqzohjjwdc .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#msprmgduiz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#bqzohjjwdc div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2321,7 +2326,7 @@ Note
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 <p>The code chunks below is used to create an interactive point symbol map.</p>
@@ -2356,7 +2361,7 @@ Note
 <div class="cell">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 <p>The figure above reveal that there is sign of spatial autocorrelation.</p>
@@ -2509,7 +2514,7 @@ Note
 <pre><code>   ***********************************************************************
    *                       Package   GWmodel                             *
    ***********************************************************************
-   Program starts at: 2025-10-18 15:57:37.859614 
+   Program starts at: 2025-10-23 21:58:46.39848 
    Call:
    gwr.basic(formula = SELLING_PRICE ~ AREA_SQM + AGE + PROX_CBD + 
     PROX_CHILDCARE + PROX_ELDERLYCARE + PROX_URA_GROWTH_AREA + 
@@ -2617,7 +2622,7 @@ Note
    Adjusted R-square value:  0.8430417 
 
    ***********************************************************************
-   Program stops at: 2025-10-18 15:57:38.927633 </code></pre>
+   Program stops at: 2025-10-23 21:58:47.006377 </code></pre>
 </div>
 </div>
 <p>The report shows that the AICc of the gwr is 42263.61 which is significantly smaller than the globel multiple linear regression model of 42967.1.</p>
@@ -2685,7 +2690,7 @@ Adaptive bandwidth: 30 CV score: 4.422088e+14 </code></pre>
 <pre><code>   ***********************************************************************
    *                       Package   GWmodel                             *
    ***********************************************************************
-   Program starts at: 2025-10-18 15:57:43.918761 
+   Program starts at: 2025-10-23 21:58:52.389882 
    Call:
    gwr.basic(formula = SELLING_PRICE ~ AREA_SQM + AGE + PROX_CBD + 
     PROX_CHILDCARE + PROX_ELDERLYCARE + PROX_URA_GROWTH_AREA + 
@@ -2793,7 +2798,7 @@ Adaptive bandwidth: 30 CV score: 4.422088e+14 </code></pre>
    Adjusted R-square value:  0.8561185 
 
    ***********************************************************************
-   Program stops at: 2025-10-18 15:57:44.700413 </code></pre>
+   Program stops at: 2025-10-23 21:58:53.125313 </code></pre>
 </div>
 </div>
 <p>The report shows that the AICc the adaptive distance gwr is 41982.22 which is even smaller than the AICc of the fixed distance gwr of 42263.61.</p>
@@ -2893,7 +2898,7 @@ $ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POINT (25
 <div class="cell">
 <div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_svy21)<span class="sc">+</span></span>
 <span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">fill_alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
@@ -2917,7 +2922,7 @@ $ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POINT (25
 </div>
 <div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 </section>
@@ -2927,7 +2932,7 @@ $ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POINT (25
 <div class="cell">
 <div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>AREA_SQM_SE <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(mpsz_svy21)<span class="sc">+</span></span>
 <span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
@@ -2964,7 +2969,7 @@ $ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POINT (25
 </div>
 <div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 </div>
 </section>
@@ -2987,7 +2992,7 @@ $ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POINT (25
 <div class="cell">
 <div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ tmap mode set to "plot".</code></pre>
+<pre><code>ℹ tmap modes "plot" - "view"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(tampines) <span class="sc">+</span></span>
 <span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">fill_alpha =</span> <span class="fl">0.1</span>, <span class="at">border.col =</span> <span class="st">"gray60"</span>) <span class="sc">+</span></span>
