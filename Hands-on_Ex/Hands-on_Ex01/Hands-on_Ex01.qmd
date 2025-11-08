@@ -1,6 +1,11 @@
 ---
 title: "Hands-on Exercise 1"
 author: "Shawn Tan"
+execute:
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
 ---
 
 # Getting Started

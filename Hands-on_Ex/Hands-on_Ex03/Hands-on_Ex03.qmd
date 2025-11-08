@@ -1,6 +1,11 @@
 ---
-title: "Spatio-Temporal Point Patterns Analysis"
+title: "Hands-on Ex_03 - Spatio-Temporal Point Patterns Analysis"
 format: html
+execute:
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
 ---
 
 # **Overview**
