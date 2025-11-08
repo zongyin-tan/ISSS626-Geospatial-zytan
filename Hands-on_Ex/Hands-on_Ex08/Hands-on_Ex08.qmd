@@ -1,0 +1,449 @@
+---
+title: "Hands-on_Ex08 - Geographically Weighted Predictive Models"
+format: html
+execute:
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+# Overview
+
+Predictive modeling is the process of using statistical or machine learning tools to forecast future events using past data. The goal is to study existing patterns so that the model can make reliable predictions about unknown or future outcomes.
+
+In geospatial predictive modeling, events are rarely random. They are shaped by factors such as environment, infrastructure, and human behavior. Spatial predictive models aim to capture these influences by linking the location of past events to measurable variables that help explain where similar events are likely to happen.
+
+# The Data
+
+-   **Aspatial dataset**:
+
+    -   HDB Resale data: a list of HDB resale transacted prices in Singapore from Jan 2017 onwards. It is in csv format which can be downloaded from Data.gov.sg.
+
+-   **Geospatial dataset**:
+
+    -   *MP14_SUBZONE_WEB_PL*: a polygon feature data providing information of URA 2014 Master Plan Planning Subzone boundary data. It is in ESRI shapefile format. This data set was also downloaded from Data.gov.sg
+
+-   **Locational factors with geographic coordinates**:
+
+    -   Downloaded from **Data.gov.sg**.
+
+        -   **Eldercare** data is a list of eldercare in Singapore. It is in shapefile format.
+
+        -   **Hawker Centre** data is a list of hawker centres in Singapore. It is in geojson format.
+
+        -   **Parks** data is a list of parks in Singapore. It is in geojson format.
+
+        -   **Supermarket** data is a list of supermarkets in Singapore. It is in geojson format.
+
+        -   **CHAS clinics** data is a list of CHAS clinics in Singapore. It is in geojson format.
+
+        -   **Childcare service** data is a list of childcare services in Singapore. It is in geojson format.
+
+        -   **Kindergartens** data is a list of kindergartens in Singapore. It is in geojson format.
+
+    -   Downloaded from **Datamall.lta.gov.sg**.
+
+        -   **MRT** data is a list of MRT/LRT stations in Singapore with the station names and codes. It is in shapefile format.
+
+        -   **Bus stops** data is a list of bus stops in Singapore. It is in shapefile format.
+
+-   **Locational factors without geographic coordinates**:
+
+    -   Downloaded from **Data.gov.sg**.
+
+        -   **Primary school** data is extracted from the list on General information of schools from data.gov portal. It is in csv format.
+
+    -   Retrieved/Scraped from **other sources**
+
+        -   **CBD** coordinates obtained from Google.
+
+        -   **Shopping malls** data is a list of Shopping malls in Singapore obtained from Wikipedia.
+
+        -   **Good primary schools** is a list of primary schools that are ordered in ranking in terms of popularity and this can be found at Local Salary Forum.
+
+# Installing and Loading R packages
+
+::: panel-tabset
+## Packages used
+
+-   A list called packages will be created and will consists of all the R packages required to accomplish this exercise.
+
+-   Check if R packages on package have been installed in R and if not, they will be installed.
+
+-   After all the R packages have been installed, they will be loaded.
+
+## Code chunk
+
+The code chunk below uses *p_load()* of pacman package to check if the packages are installed in the computer. If they are, then they will be launched into R.
+
+```{r}
+pacman::p_load(sf, spdep, GWmodel, SpatialML, 
+               tmap, rsample, Metrics, tidyverse)
+```
+:::
+
+# Preparing Data
+
+The dataset is loaded, checked and divided into subsets for model training and testing.
+
+## Reading data file to rds
+
+The dataset is stored in an RDS file format and loaded for faster access and to preserve data structure.
+
+```{r}
+mdata <- read_rds("data/rawdata/mdata.rds")
+```
+
+## Data Sampling
+
+A random sample is created where 65% of the data is used for training the model and 35% is used for testing. The random seed ensures that results are reproducible.
+
+```{r}
+set.seed(1234)
+resale_split <- initial_split(mdata, 
+                              prop = 6.5/10,)
+train_data <- training(resale_split)
+test_data <- testing(resale_split)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(train_data, "data/model/train_data.rds")
+write_rds(test_data, "data/model/test_data.rds")
+```
+
+# Computing Correlation Matrix
+
+A correlation matrix is produced to examine how variables relate to one another. Identifying variables with high correlation helps avoid redundancy and ensures model stability.
+
+```{r}
+mdata_nogeo <- mdata %>%
+  st_drop_geometry()
+corrplot::corrplot(cor(mdata_nogeo[, 2:17]), 
+                   diag = FALSE, 
+                   order = "AOE",
+                   tl.pos = "td", 
+                   tl.cex = 0.5, 
+                   method = "number", 
+                   type = "upper")
+```
+
+# Retriving the Stored Data
+
+The training and testing datasets that were saved earlier are reloaded for consistency and use in subsequent steps.
+
+```{r}
+train_data <- read_rds("data/model/train_data.rds")
+test_data <- read_rds("data/model/test_data.rds")
+```
+
+# Building a non-spatial multiple linear regression
+
+A multiple linear regression model is created to explain housing prices using variables such as floor area, storey level, lease duration, and proximity to amenities. This model assumes that the relationship between predictors and price is the same everywhere. It serves as a baseline for comparison with spatial models.
+
+```{r}
+price_mlr <- lm(resale_price ~ floor_area_sqm +
+                  storey_order + remaining_lease_mths +
+                  PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+                  PROX_MRT + PROX_PARK + PROX_MALL + 
+                  PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                data=train_data)
+summary(price_mlr)
+```
+
+```{r}
+write_rds(price_mlr, "data/model/price_mlr.rds" ) 
+```
+
+# gwr predictive method
+
+Geographically Weighted Regression (GWR) allows the relationship between predictors and the dependent variable to change across locations. This captures spatial variability that a global model cannot.
+
+## Computing adaptive bandwidth
+
+An adaptive bandwidth is determined through cross-validation. This ensures that in dense data regions, smaller neighborhoods are used, while larger neighborhoods are used where data is sparse.
+
+```{r}
+#| eval: false
+bw_adaptive <- bw.gwr(
+  formula = resale_price ~ floor_area_sqm +
+    storey_order + remaining_lease_mths +
+    PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+    PROX_MRT + PROX_PARK + PROX_MALL + 
+    PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+    WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+    WITHIN_1KM_PRISCH,
+  data=train_data,
+  approach="CV",
+  kernel="gaussian",
+  adaptive=TRUE,
+  longlat=FALSE)
+
+write_rds(bw_adaptive, "data/model/bw_adaptive.rds")
+```
+
+## Constructing the adaptive bandwidth gwr model
+
+The GWR model is calibrated using the optimal adaptive bandwidth to generate location-specific coefficients.
+
+```{r}
+bw_adaptive <- read_rds(
+  "data/model/bw_adaptive.rds")
+```
+
+```{r}
+#| eval: false
+gwr_adaptive <- gwr.basic(
+  formula = resale_price ~ floor_area_sqm +
+    storey_order + remaining_lease_mths + 
+    PROX_CBD + PROX_ELDERLYCARE + 
+    PROX_HAWKER + PROX_MRT + PROX_PARK + 
+    PROX_MALL + PROX_SUPERMARKET +
+    WITHIN_350M_KINDERGARTEN +
+    WITHIN_350M_CHILDCARE + 
+    WITHIN_350M_BUS + WITHIN_1KM_PRISCH,
+  data=train_data,
+  bw=bw_adaptive, 
+  kernel = 'gaussian', 
+  adaptive=TRUE,
+  longlat = FALSE)
+
+write_rds(gwr_adaptive, 
+          "data/model/gwr_adaptive.rds")
+```
+
+## Retrieve gwr output object
+
+The calibrated GWR model object is reloaded and examined to review the local parameter estimates.
+
+```{r}
+gwr_adaptive <- read_rds("data/model/gwr_adaptive.rds")
+```
+
+```{r}
+gwr_adaptive
+```
+
+## Computing adaptive bandwidth for the test data
+
+The adaptive bandwidth calculation is repeated for the test data to confirm that the model performs consistently across both datasets.
+
+```{r}
+#| eval: false
+gwr_bw_test_adaptive <- bw.gwr(
+  formula = resale_price ~ floor_area_sqm +
+    storey_order + remaining_lease_mths +
+    PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+    PROX_MRT + PROX_PARK + PROX_MALL + 
+    PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+    WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+    WITHIN_1KM_PRISCH,
+  data=test_data,
+  approach="CV",
+  kernel="gaussian",
+  adaptive=TRUE,
+  longlat=FALSE)
+
+write_rds(gwr_bw_test_adaptive, 
+          "data/model/gwr_bw_test_adaptive.rds")
+```
+
+## Computing predicted values of the test data
+
+The trained GWR model is applied to the test data to produce predicted housing prices, which are later compared with the actual values.
+
+```{r}
+#| eval: false
+gwr_pred <- gwr.predict(
+  formula = resale_price ~ floor_area_sqm + 
+    storey_order + remaining_lease_mths + 
+    PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + 
+    PROX_MRT + PROX_PARK + PROX_MALL + 
+    PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+    WITHIN_350M_CHILDCARE + WITHIN_350M_BUS + 
+    WITHIN_1KM_PRISCH, 
+  data=train_data, 
+  predictdata = test_data, 
+  bw=40, 
+  kernel = 'gaussian', 
+  adaptive=TRUE, 
+  longlat = FALSE)
+
+write_rds(gwr_pred, 
+          "data/model/gwr_pred.rds")
+```
+
+# Calibrating Random Forest Model
+
+A Random Forest model is built to capture non-linear relationships among variables. Unlike regression, this model can handle complex interactions without assuming a fixed functional form.
+
+## Preparing coordinates data
+
+The spatial coordinates (X and Y) of all data points are extracted. These coordinates are required when applying geographically weighted machine learning.
+
+```{r}
+coords <- st_coordinates(mdata)
+coords_train <- st_coordinates(train_data)
+coords_test <- st_coordinates(test_data)
+```
+
+```{r}
+#| eval: false
+coords_train <- write_rds(
+  coords_train, 
+  "data/model/coords_train.rds" )
+coords_test <- write_rds(
+  coords_test, 
+  "data/model/coords_test.rds" )
+```
+
+```{r}
+coords_train <- read_rds("data/model/coords_train.rds")
+coords_test <- read_rds("data/model/coords_test.rds")
+```
+
+## Droping geometry field
+
+The geometry column is removed from the dataset to prepare it for non-spatial modeling functions.
+
+```{r}
+train_data_nogeom <- train_data %>% 
+  st_drop_geometry()
+
+test_data_nogeom <- test_data %>% 
+  st_drop_geometry()
+```
+
+## Calibrating a non-spatial random forest model
+
+A standard Random Forest model is trained using the non-spatial data. The model output provides an overview of variable importance and predictive strength.
+
+```{r}
+#| eval: false
+set.seed(1234)
+rf <- ranger(
+  formula = resale_price ~ floor_area_sqm +
+    storey_order + remaining_lease_mths + 
+    PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + 
+    PROX_MRT + PROX_PARK + PROX_MALL + PROX_SUPERMARKET + 
+    WITHIN_350M_KINDERGARTEN + 
+    WITHIN_350M_CHILDCARE + 
+    WITHIN_350M_BUS +  
+    WITHIN_1KM_PRISCH,
+  data=train_data_nogeom)
+rf
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(rf, "data/model/rf.rds")
+```
+
+```{r}
+#| echo: false
+rf <- read_rds("data/model/rf.rds")
+```
+
+# Calibrating Geographical Weighted Random Forest Model
+
+The Geographically Weighted Random Forest (GW-RF) model builds on Random Forest by allowing predictions to vary by location. Each local model emphasizes nearby data, producing results that reflect regional differences.
+
+## Calibrating using training data
+
+The GW-RF model is trained using the training dataset. The process adjusts each local model based on the data points surrounding it.
+
+```{r}
+#| eval: false
+set.seed(1234)
+gwRF_adaptive <- grf(
+  formula = resale_price ~ floor_area_sqm +
+    storey_order + remaining_lease_mths + 
+    PROX_CBD + PROX_ELDERLYCARE + 
+    PROX_HAWKER + PROX_MRT + PROX_PARK + 
+    PROX_MALL + PROX_SUPERMARKET +
+    WITHIN_350M_KINDERGARTEN +
+    WITHIN_350M_CHILDCARE + 
+    WITHIN_350M_BUS + WITHIN_1KM_PRISCH,
+  dframe=train_data_nogeom, 
+  bw=40,
+  kernel="adaptive",
+  coords=coords_train)
+
+write_rds(gwRF_adaptive, "data/model/gwRF_adaptive.rds")
+```
+
+```{r}
+gwRF_adaptive <- read_rds("data/model/gwRF_adaptive.rds")
+```
+
+## Predicting by using test data
+
+### Preparing the test data
+
+Coordinate data is combined with the test dataset to provide spatial context for prediction.
+
+```{r}
+test_data_nogeom <- cbind(
+  test_data, coords_test) %>%
+  st_drop_geometry()
+```
+
+### Predicting with test data
+
+The model generates predicted housing prices, where each prediction is influenced by its local neighborhood.
+
+```{r}
+#| eval: false
+gwRF_pred <- predict.grf(gwRF_adaptive, 
+                           test_data_nogeom, 
+                           x.var.name="X",
+                           y.var.name="Y", 
+                           local.w=1,
+                           global.w=0)
+
+GRF_pred <- write_rds(gwRF_pred, "data/model/GRF_pred.rds")
+```
+
+### Converting the predicting output into a data frame
+
+```{r}
+GRF_pred <- read_rds("data/model/GRF_pred.rds")
+GRF_pred_df <- as.data.frame(GRF_pred)
+```
+
+The predicted values are converted into a standard data frame format and combined with actual prices for evaluation.
+
+```{r}
+test_data_p <- cbind(
+  test_data, GRF_pred_df) %>%
+  select(resale_price, GRF_pred)
+```
+
+```{r}
+write_rds(test_data_p, "data/model/test_data_p.rds")
+```
+
+## Calculating Root Mean Square Error
+
+The Root Mean Square Error (RMSE) is computed to measure prediction accuracy. A smaller RMSE indicates that the model’s predictions are closer to the actual values.
+
+```{r}
+rmse(test_data_p$resale_price, 
+     test_data_p$GRF_pred)
+```
+
+## Visualising the predicted values
+
+A scatter plot is used to compare actual and predicted prices. When the points are close to the diagonal line, it means the model predicts accurately.
+
+```{r}
+ggplot(data = test_data_p,
+       aes(x = GRF_pred,
+           y = resale_price)) +
+  geom_point()
+```

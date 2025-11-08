@@ -1,6 +1,11 @@
 ---
 title: "Geographical Segmentation with Spatially Constrained Clustering Techniques"
 format: html
+execute:
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
 ---
 
 # **Overview**
