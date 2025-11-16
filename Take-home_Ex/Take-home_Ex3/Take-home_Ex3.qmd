@@ -8,7 +8,7 @@ execute:
   eval: true
   echo: true
   warning: false
-  freeze: true
+  freeze: false
 ---
 
 # Overview
@@ -921,7 +921,6 @@ gwr.bw <- readRDS("data/rds/gwr_bw.rds")
 Based on the optimal adaptive bandwidth identified, the GWR model will then be calibrated using this bandwidth. The same set of structural and locational predictors from the linear regression model was included so that the results remain directly comparable.
 
 ```{r}
-#| eval: false
 hpm.gwr <- gwr.basic(
   formula  = resale_price ~ floor_area_sqm +
                              remaining_lease_yrs +
